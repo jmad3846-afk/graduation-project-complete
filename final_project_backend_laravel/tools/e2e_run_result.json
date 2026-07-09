@@ -1,0 +1,933 @@
+{
+    "phase1": {
+        "create_plan": {
+            "http_code": 201,
+            "body": "{\"id\":3,\"month\":7,\"year\":2026,\"status\":\"draft\",\"published_at\":null,\"created_by\":1,\"statistics\":{\"total_shifts\":93,\"total_assignments\":0,\"total_polls\":0,\"completed_polls\":0}}",
+            "error": null
+        },
+        "polls_started": {
+            "start-leader-poll": {
+                "http_code": 200,
+                "body": "{\"message\":\"Leader poll started\"}",
+                "error": null
+            },
+            "start-scout-poll": {
+                "http_code": 200,
+                "body": "{\"message\":\"Scout poll started\"}",
+                "error": null
+            },
+            "start-paramedic-poll": {
+                "http_code": 200,
+                "body": "{\"message\":\"Paramedic poll started\"}",
+                "error": null
+            }
+        },
+        "polls_db": [
+            {
+                "id": 2,
+                "user_id": 5,
+                "role": "paramedic",
+                "status": "pending"
+            },
+            {
+                "id": 3,
+                "user_id": 8,
+                "role": "paramedic",
+                "status": "pending"
+            }
+        ],
+        "submit_polls": {
+            "paramedic": {
+                "http_code": 404,
+                "body": "{\n    \"message\": \"No query results for model [App\\\\Models\\\\ShiftPoll].\",\n    \"exception\": \"Symfony\\\\Component\\\\HttpKernel\\\\Exception\\\\NotFoundHttpException\",\n    \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Foundation\\\\Exceptions\\\\Handler.php\",\n    \"line\": 668,\n    \"trace\": [\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Foundation\\\\Exceptions\\\\Handler.php\",\n            \"line\": 616,\n            \"function\": \"prepareException\",\n            \"class\": \"Illuminate\\\\Foundation\\\\Exceptions\\\\Handler\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\nunomaduro\\\\collision\\\\src\\\\Adapters\\\\Laravel\\\\ExceptionHandler.php\",\n            \"line\": 55,\n            \"function\": \"render\",\n            \"class\": \"Illuminate\\\\Foundation\\\\Exceptions\\\\Handler\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Routing\\\\Pipeline.php\",\n            \"line\": 51,\n            \"function\": \"render\",\n            \"class\": \"NunoMaduro\\\\Collision\\\\Adapters\\\\Laravel\\\\ExceptionHandler\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 182,\n            \"function\": \"handleException\",\n            \"class\": \"Illuminate\\\\Routing\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Routing\\\\Middleware\\\\SubstituteBindings.php\",\n            \"line\": 50,\n            \"function\": \"Illuminate\\\\Pipeline\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 219,\n            \"function\": \"handle\",\n            \"class\": \"Illuminate\\\\Routing\\\\Middleware\\\\SubstituteBindings\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Auth\\\\Middleware\\\\Authenticate.php\",\n            \"line\": 63,\n            \"function\": \"Illuminate\\\\Pipeline\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 219,\n            \"function\": \"handle\",\n            \"class\": \"Illuminate\\\\Auth\\\\Middleware\\\\Authenticate\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 137,\n            \"function\": \"Illuminate\\\\Pipeline\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Routing\\\\Router.php\",\n            \"line\": 821,\n            \"function\": \"then\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Routing\\\\Router.php\",\n            \"line\": 800,\n            \"function\": \"runRouteWithinStack\",\n            \"class\": \"Illuminate\\\\Routing\\\\Router\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Routing\\\\Router.php\",\n            \"line\": 764,\n            \"function\": \"runRoute\",\n            \"class\": \"Illuminate\\\\Routing\\\\Router\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Routing\\\\Router.php\",\n            \"line\": 753,\n            \"function\": \"dispatchToRoute\",\n            \"class\": \"Illuminate\\\\Routing\\\\Router\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Foundation\\\\Http\\\\Kernel.php\",\n            \"line\": 200,\n            \"function\": \"dispatch\",\n            \"class\": \"Illuminate\\\\Routing\\\\Router\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 180,\n            \"function\": \"Illuminate\\\\Foundation\\\\Http\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Foundation\\\\Http\\\\Kernel\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Foundation\\\\Http\\\\Middleware\\\\TransformsRequest.php\",\n            \"line\": 21,\n            \"function\": \"Illuminate\\\\Pipeline\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Foundation\\\\Http\\\\Middleware\\\\ConvertEmptyStringsToNull.php\",\n            \"line\": 31,\n            \"function\": \"handle\",\n            \"class\": \"Illuminate\\\\Foundation\\\\Http\\\\Middleware\\\\TransformsRequest\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 219,\n            \"function\": \"handle\",\n            \"class\": \"Illuminate\\\\Foundation\\\\Http\\\\Middleware\\\\ConvertEmptyStringsToNull\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Foundation\\\\Http\\\\Middleware\\\\TransformsRequest.php\",\n            \"line\": 21,\n            \"function\": \"Illuminate\\\\Pipeline\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Foundation\\\\Http\\\\Middleware\\\\TrimStrings.php\",\n            \"line\": 51,\n            \"function\": \"handle\",\n            \"class\": \"Illuminate\\\\Foundation\\\\Http\\\\Middleware\\\\TransformsRequest\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 219,\n            \"function\": \"handle\",\n            \"class\": \"Illuminate\\\\Foundation\\\\Http\\\\Middleware\\\\TrimStrings\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Http\\\\Middleware\\\\ValidatePostSize.php\",\n            \"line\": 27,\n            \"function\": \"Illuminate\\\\Pipeline\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 219,\n            \"function\": \"handle\",\n            \"class\": \"Illuminate\\\\Http\\\\Middleware\\\\ValidatePostSize\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Foundation\\\\Http\\\\Middleware\\\\PreventRequestsDuringMaintenance.php\",\n            \"line\": 109,\n            \"function\": \"Illuminate\\\\Pipeline\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 219,\n            \"function\": \"handle\",\n            \"class\": \"Illuminate\\\\Foundation\\\\Http\\\\Middleware\\\\PreventRequestsDuringMaintenance\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Http\\\\Middleware\\\\HandleCors.php\",\n            \"line\": 74,\n            \"function\": \"Illuminate\\\\Pipeline\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 219,\n            \"function\": \"handle\",\n            \"class\": \"Illuminate\\\\Http\\\\Middleware\\\\HandleCors\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Http\\\\Middleware\\\\TrustProxies.php\",\n            \"line\": 58,\n            \"function\": \"Illuminate\\\\Pipeline\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 219,\n            \"function\": \"handle\",\n            \"class\": \"Illuminate\\\\Http\\\\Middleware\\\\TrustProxies\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Foundation\\\\Http\\\\Middleware\\\\InvokeDeferredCallbacks.php\",\n            \"line\": 22,\n            \"function\": \"Illuminate\\\\Pipeline\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 219,\n            \"function\": \"handle\",\n            \"class\": \"Illuminate\\\\Foundation\\\\Http\\\\Middleware\\\\InvokeDeferredCallbacks\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Http\\\\Middleware\\\\ValidatePathEncoding.php\",\n            \"line\": 26,\n            \"function\": \"Illuminate\\\\Pipeline\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 219,\n            \"function\": \"handle\",\n            \"class\": \"Illuminate\\\\Http\\\\Middleware\\\\ValidatePathEncoding\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 137,\n            \"function\": \"Illuminate\\\\Pipeline\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Foundation\\\\Http\\\\Kernel.php\",\n            \"line\": 175,\n            \"function\": \"then\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Foundation\\\\Http\\\\Kernel.php\",\n            \"line\": 144,\n            \"function\": \"sendRequestThroughRouter\",\n            \"class\": \"Illuminate\\\\Foundation\\\\Http\\\\Kernel\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\tools\\\\e2e_run.php\",\n            \"line\": 18,\n            \"function\": \"handle\",\n            \"class\": \"Illuminate\\\\Foundation\\\\Http\\\\Kernel\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\Users\\\\jmad3\\\\Desktop\\\\graduation project complete\\\\final_project_backend_laravel\\\\tools\\\\e2e_run.php\",\n            \"line\": 75,\n            \"function\": \"http_post_local\"\n        }\n    ]\n}",
+                "error": null
+            }
+        },
+        "build": {
+            "http_code": 200,
+            "body": "{\"created_assignments\":62,\"unfilled_slots\":[{\"shift_id\":105,\"team\":1,\"role\":\"leader\"},{\"shift_id\":105,\"team\":1,\"role\":\"scout\"},{\"shift_id\":105,\"team\":2,\"role\":\"leader\"},{\"shift_id\":105,\"team\":2,\"role\":\"scout\"},{\"shift_id\":106,\"team\":1,\"role\":\"leader\"},{\"shift_id\":106,\"team\":1,\"role\":\"scout\"},{\"shift_id\":106,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":106,\"team\":2,\"role\":\"leader\"},{\"shift_id\":106,\"team\":2,\"role\":\"scout\"},{\"shift_id\":106,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":107,\"team\":1,\"role\":\"leader\"},{\"shift_id\":107,\"team\":1,\"role\":\"scout\"},{\"shift_id\":107,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":107,\"team\":2,\"role\":\"leader\"},{\"shift_id\":107,\"team\":2,\"role\":\"scout\"},{\"shift_id\":107,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":108,\"team\":1,\"role\":\"leader\"},{\"shift_id\":108,\"team\":1,\"role\":\"scout\"},{\"shift_id\":108,\"team\":2,\"role\":\"leader\"},{\"shift_id\":108,\"team\":2,\"role\":\"scout\"},{\"shift_id\":109,\"team\":1,\"role\":\"leader\"},{\"shift_id\":109,\"team\":1,\"role\":\"scout\"},{\"shift_id\":109,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":109,\"team\":2,\"role\":\"leader\"},{\"shift_id\":109,\"team\":2,\"role\":\"scout\"},{\"shift_id\":109,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":110,\"team\":1,\"role\":\"leader\"},{\"shift_id\":110,\"team\":1,\"role\":\"scout\"},{\"shift_id\":110,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":110,\"team\":2,\"role\":\"leader\"},{\"shift_id\":110,\"team\":2,\"role\":\"scout\"},{\"shift_id\":110,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":111,\"team\":1,\"role\":\"leader\"},{\"shift_id\":111,\"team\":1,\"role\":\"scout\"},{\"shift_id\":111,\"team\":2,\"role\":\"leader\"},{\"shift_id\":111,\"team\":2,\"role\":\"scout\"},{\"shift_id\":112,\"team\":1,\"role\":\"leader\"},{\"shift_id\":112,\"team\":1,\"role\":\"scout\"},{\"shift_id\":112,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":112,\"team\":2,\"role\":\"leader\"},{\"shift_id\":112,\"team\":2,\"role\":\"scout\"},{\"shift_id\":112,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":113,\"team\":1,\"role\":\"leader\"},{\"shift_id\":113,\"team\":1,\"role\":\"scout\"},{\"shift_id\":113,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":113,\"team\":2,\"role\":\"leader\"},{\"shift_id\":113,\"team\":2,\"role\":\"scout\"},{\"shift_id\":113,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":114,\"team\":1,\"role\":\"leader\"},{\"shift_id\":114,\"team\":1,\"role\":\"scout\"},{\"shift_id\":114,\"team\":2,\"role\":\"leader\"},{\"shift_id\":114,\"team\":2,\"role\":\"scout\"},{\"shift_id\":115,\"team\":1,\"role\":\"leader\"},{\"shift_id\":115,\"team\":1,\"role\":\"scout\"},{\"shift_id\":115,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":115,\"team\":2,\"role\":\"leader\"},{\"shift_id\":115,\"team\":2,\"role\":\"scout\"},{\"shift_id\":115,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":116,\"team\":1,\"role\":\"leader\"},{\"shift_id\":116,\"team\":1,\"role\":\"scout\"},{\"shift_id\":116,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":116,\"team\":2,\"role\":\"leader\"},{\"shift_id\":116,\"team\":2,\"role\":\"scout\"},{\"shift_id\":116,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":117,\"team\":1,\"role\":\"leader\"},{\"shift_id\":117,\"team\":1,\"role\":\"scout\"},{\"shift_id\":117,\"team\":2,\"role\":\"leader\"},{\"shift_id\":117,\"team\":2,\"role\":\"scout\"},{\"shift_id\":118,\"team\":1,\"role\":\"leader\"},{\"shift_id\":118,\"team\":1,\"role\":\"scout\"},{\"shift_id\":118,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":118,\"team\":2,\"role\":\"leader\"},{\"shift_id\":118,\"team\":2,\"role\":\"scout\"},{\"shift_id\":118,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":119,\"team\":1,\"role\":\"leader\"},{\"shift_id\":119,\"team\":1,\"role\":\"scout\"},{\"shift_id\":119,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":119,\"team\":2,\"role\":\"leader\"},{\"shift_id\":119,\"team\":2,\"role\":\"scout\"},{\"shift_id\":119,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":120,\"team\":1,\"role\":\"leader\"},{\"shift_id\":120,\"team\":1,\"role\":\"scout\"},{\"shift_id\":120,\"team\":2,\"role\":\"leader\"},{\"shift_id\":120,\"team\":2,\"role\":\"scout\"},{\"shift_id\":121,\"team\":1,\"role\":\"leader\"},{\"shift_id\":121,\"team\":1,\"role\":\"scout\"},{\"shift_id\":121,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":121,\"team\":2,\"role\":\"leader\"},{\"shift_id\":121,\"team\":2,\"role\":\"scout\"},{\"shift_id\":121,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":122,\"team\":1,\"role\":\"leader\"},{\"shift_id\":122,\"team\":1,\"role\":\"scout\"},{\"shift_id\":122,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":122,\"team\":2,\"role\":\"leader\"},{\"shift_id\":122,\"team\":2,\"role\":\"scout\"},{\"shift_id\":122,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":123,\"team\":1,\"role\":\"leader\"},{\"shift_id\":123,\"team\":1,\"role\":\"scout\"},{\"shift_id\":123,\"team\":2,\"role\":\"leader\"},{\"shift_id\":123,\"team\":2,\"role\":\"scout\"},{\"shift_id\":124,\"team\":1,\"role\":\"leader\"},{\"shift_id\":124,\"team\":1,\"role\":\"scout\"},{\"shift_id\":124,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":124,\"team\":2,\"role\":\"leader\"},{\"shift_id\":124,\"team\":2,\"role\":\"scout\"},{\"shift_id\":124,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":125,\"team\":1,\"role\":\"leader\"},{\"shift_id\":125,\"team\":1,\"role\":\"scout\"},{\"shift_id\":125,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":125,\"team\":2,\"role\":\"leader\"},{\"shift_id\":125,\"team\":2,\"role\":\"scout\"},{\"shift_id\":125,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":126,\"team\":1,\"role\":\"leader\"},{\"shift_id\":126,\"team\":1,\"role\":\"scout\"},{\"shift_id\":126,\"team\":2,\"role\":\"leader\"},{\"shift_id\":126,\"team\":2,\"role\":\"scout\"},{\"shift_id\":127,\"team\":1,\"role\":\"leader\"},{\"shift_id\":127,\"team\":1,\"role\":\"scout\"},{\"shift_id\":127,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":127,\"team\":2,\"role\":\"leader\"},{\"shift_id\":127,\"team\":2,\"role\":\"scout\"},{\"shift_id\":127,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":128,\"team\":1,\"role\":\"leader\"},{\"shift_id\":128,\"team\":1,\"role\":\"scout\"},{\"shift_id\":128,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":128,\"team\":2,\"role\":\"leader\"},{\"shift_id\":128,\"team\":2,\"role\":\"scout\"},{\"shift_id\":128,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":129,\"team\":1,\"role\":\"leader\"},{\"shift_id\":129,\"team\":1,\"role\":\"scout\"},{\"shift_id\":129,\"team\":2,\"role\":\"leader\"},{\"shift_id\":129,\"team\":2,\"role\":\"scout\"},{\"shift_id\":130,\"team\":1,\"role\":\"leader\"},{\"shift_id\":130,\"team\":1,\"role\":\"scout\"},{\"shift_id\":130,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":130,\"team\":2,\"role\":\"leader\"},{\"shift_id\":130,\"team\":2,\"role\":\"scout\"},{\"shift_id\":130,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":131,\"team\":1,\"role\":\"leader\"},{\"shift_id\":131,\"team\":1,\"role\":\"scout\"},{\"shift_id\":131,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":131,\"team\":2,\"role\":\"leader\"},{\"shift_id\":131,\"team\":2,\"role\":\"scout\"},{\"shift_id\":131,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":132,\"team\":1,\"role\":\"leader\"},{\"shift_id\":132,\"team\":1,\"role\":\"scout\"},{\"shift_id\":132,\"team\":2,\"role\":\"leader\"},{\"shift_id\":132,\"team\":2,\"role\":\"scout\"},{\"shift_id\":133,\"team\":1,\"role\":\"leader\"},{\"shift_id\":133,\"team\":1,\"role\":\"scout\"},{\"shift_id\":133,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":133,\"team\":2,\"role\":\"leader\"},{\"shift_id\":133,\"team\":2,\"role\":\"scout\"},{\"shift_id\":133,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":134,\"team\":1,\"role\":\"leader\"},{\"shift_id\":134,\"team\":1,\"role\":\"scout\"},{\"shift_id\":134,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":134,\"team\":2,\"role\":\"leader\"},{\"shift_id\":134,\"team\":2,\"role\":\"scout\"},{\"shift_id\":134,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":135,\"team\":1,\"role\":\"leader\"},{\"shift_id\":135,\"team\":1,\"role\":\"scout\"},{\"shift_id\":135,\"team\":2,\"role\":\"leader\"},{\"shift_id\":135,\"team\":2,\"role\":\"scout\"},{\"shift_id\":136,\"team\":1,\"role\":\"leader\"},{\"shift_id\":136,\"team\":1,\"role\":\"scout\"},{\"shift_id\":136,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":136,\"team\":2,\"role\":\"leader\"},{\"shift_id\":136,\"team\":2,\"role\":\"scout\"},{\"shift_id\":136,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":137,\"team\":1,\"role\":\"leader\"},{\"shift_id\":137,\"team\":1,\"role\":\"scout\"},{\"shift_id\":137,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":137,\"team\":2,\"role\":\"leader\"},{\"shift_id\":137,\"team\":2,\"role\":\"scout\"},{\"shift_id\":137,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":138,\"team\":1,\"role\":\"leader\"},{\"shift_id\":138,\"team\":1,\"role\":\"scout\"},{\"shift_id\":138,\"team\":2,\"role\":\"leader\"},{\"shift_id\":138,\"team\":2,\"role\":\"scout\"},{\"shift_id\":139,\"team\":1,\"role\":\"leader\"},{\"shift_id\":139,\"team\":1,\"role\":\"scout\"},{\"shift_id\":139,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":139,\"team\":2,\"role\":\"leader\"},{\"shift_id\":139,\"team\":2,\"role\":\"scout\"},{\"shift_id\":139,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":140,\"team\":1,\"role\":\"leader\"},{\"shift_id\":140,\"team\":1,\"role\":\"scout\"},{\"shift_id\":140,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":140,\"team\":2,\"role\":\"leader\"},{\"shift_id\":140,\"team\":2,\"role\":\"scout\"},{\"shift_id\":140,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":141,\"team\":1,\"role\":\"leader\"},{\"shift_id\":141,\"team\":1,\"role\":\"scout\"},{\"shift_id\":141,\"team\":2,\"role\":\"leader\"},{\"shift_id\":141,\"team\":2,\"role\":\"scout\"},{\"shift_id\":142,\"team\":1,\"role\":\"leader\"},{\"shift_id\":142,\"team\":1,\"role\":\"scout\"},{\"shift_id\":142,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":142,\"team\":2,\"role\":\"leader\"},{\"shift_id\":142,\"team\":2,\"role\":\"scout\"},{\"shift_id\":142,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":143,\"team\":1,\"role\":\"leader\"},{\"shift_id\":143,\"team\":1,\"role\":\"scout\"},{\"shift_id\":143,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":143,\"team\":2,\"role\":\"leader\"},{\"shift_id\":143,\"team\":2,\"role\":\"scout\"},{\"shift_id\":143,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":144,\"team\":1,\"role\":\"leader\"},{\"shift_id\":144,\"team\":1,\"role\":\"scout\"},{\"shift_id\":144,\"team\":2,\"role\":\"leader\"},{\"shift_id\":144,\"team\":2,\"role\":\"scout\"},{\"shift_id\":145,\"team\":1,\"role\":\"leader\"},{\"shift_id\":145,\"team\":1,\"role\":\"scout\"},{\"shift_id\":145,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":145,\"team\":2,\"role\":\"leader\"},{\"shift_id\":145,\"team\":2,\"role\":\"scout\"},{\"shift_id\":145,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":146,\"team\":1,\"role\":\"leader\"},{\"shift_id\":146,\"team\":1,\"role\":\"scout\"},{\"shift_id\":146,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":146,\"team\":2,\"role\":\"leader\"},{\"shift_id\":146,\"team\":2,\"role\":\"scout\"},{\"shift_id\":146,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":147,\"team\":1,\"role\":\"leader\"},{\"shift_id\":147,\"team\":1,\"role\":\"scout\"},{\"shift_id\":147,\"team\":2,\"role\":\"leader\"},{\"shift_id\":147,\"team\":2,\"role\":\"scout\"},{\"shift_id\":148,\"team\":1,\"role\":\"leader\"},{\"shift_id\":148,\"team\":1,\"role\":\"scout\"},{\"shift_id\":148,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":148,\"team\":2,\"role\":\"leader\"},{\"shift_id\":148,\"team\":2,\"role\":\"scout\"},{\"shift_id\":148,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":149,\"team\":1,\"role\":\"leader\"},{\"shift_id\":149,\"team\":1,\"role\":\"scout\"},{\"shift_id\":149,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":149,\"team\":2,\"role\":\"leader\"},{\"shift_id\":149,\"team\":2,\"role\":\"scout\"},{\"shift_id\":149,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":150,\"team\":1,\"role\":\"leader\"},{\"shift_id\":150,\"team\":1,\"role\":\"scout\"},{\"shift_id\":150,\"team\":2,\"role\":\"leader\"},{\"shift_id\":150,\"team\":2,\"role\":\"scout\"},{\"shift_id\":151,\"team\":1,\"role\":\"leader\"},{\"shift_id\":151,\"team\":1,\"role\":\"scout\"},{\"shift_id\":151,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":151,\"team\":2,\"role\":\"leader\"},{\"shift_id\":151,\"team\":2,\"role\":\"scout\"},{\"shift_id\":151,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":152,\"team\":1,\"role\":\"leader\"},{\"shift_id\":152,\"team\":1,\"role\":\"scout\"},{\"shift_id\":152,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":152,\"team\":2,\"role\":\"leader\"},{\"shift_id\":152,\"team\":2,\"role\":\"scout\"},{\"shift_id\":152,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":153,\"team\":1,\"role\":\"leader\"},{\"shift_id\":153,\"team\":1,\"role\":\"scout\"},{\"shift_id\":153,\"team\":2,\"role\":\"leader\"},{\"shift_id\":153,\"team\":2,\"role\":\"scout\"},{\"shift_id\":154,\"team\":1,\"role\":\"leader\"},{\"shift_id\":154,\"team\":1,\"role\":\"scout\"},{\"shift_id\":154,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":154,\"team\":2,\"role\":\"leader\"},{\"shift_id\":154,\"team\":2,\"role\":\"scout\"},{\"shift_id\":154,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":155,\"team\":1,\"role\":\"leader\"},{\"shift_id\":155,\"team\":1,\"role\":\"scout\"},{\"shift_id\":155,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":155,\"team\":2,\"role\":\"leader\"},{\"shift_id\":155,\"team\":2,\"role\":\"scout\"},{\"shift_id\":155,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":156,\"team\":1,\"role\":\"leader\"},{\"shift_id\":156,\"team\":1,\"role\":\"scout\"},{\"shift_id\":156,\"team\":2,\"role\":\"leader\"},{\"shift_id\":156,\"team\":2,\"role\":\"scout\"},{\"shift_id\":157,\"team\":1,\"role\":\"leader\"},{\"shift_id\":157,\"team\":1,\"role\":\"scout\"},{\"shift_id\":157,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":157,\"team\":2,\"role\":\"leader\"},{\"shift_id\":157,\"team\":2,\"role\":\"scout\"},{\"shift_id\":157,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":158,\"team\":1,\"role\":\"leader\"},{\"shift_id\":158,\"team\":1,\"role\":\"scout\"},{\"shift_id\":158,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":158,\"team\":2,\"role\":\"leader\"},{\"shift_id\":158,\"team\":2,\"role\":\"scout\"},{\"shift_id\":158,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":159,\"team\":1,\"role\":\"leader\"},{\"shift_id\":159,\"team\":1,\"role\":\"scout\"},{\"shift_id\":159,\"team\":2,\"role\":\"leader\"},{\"shift_id\":159,\"team\":2,\"role\":\"scout\"},{\"shift_id\":160,\"team\":1,\"role\":\"leader\"},{\"shift_id\":160,\"team\":1,\"role\":\"scout\"},{\"shift_id\":160,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":160,\"team\":2,\"role\":\"leader\"},{\"shift_id\":160,\"team\":2,\"role\":\"scout\"},{\"shift_id\":160,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":161,\"team\":1,\"role\":\"leader\"},{\"shift_id\":161,\"team\":1,\"role\":\"scout\"},{\"shift_id\":161,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":161,\"team\":2,\"role\":\"leader\"},{\"shift_id\":161,\"team\":2,\"role\":\"scout\"},{\"shift_id\":161,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":162,\"team\":1,\"role\":\"leader\"},{\"shift_id\":162,\"team\":1,\"role\":\"scout\"},{\"shift_id\":162,\"team\":2,\"role\":\"leader\"},{\"shift_id\":162,\"team\":2,\"role\":\"scout\"},{\"shift_id\":163,\"team\":1,\"role\":\"leader\"},{\"shift_id\":163,\"team\":1,\"role\":\"scout\"},{\"shift_id\":163,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":163,\"team\":2,\"role\":\"leader\"},{\"shift_id\":163,\"team\":2,\"role\":\"scout\"},{\"shift_id\":163,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":164,\"team\":1,\"role\":\"leader\"},{\"shift_id\":164,\"team\":1,\"role\":\"scout\"},{\"shift_id\":164,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":164,\"team\":2,\"role\":\"leader\"},{\"shift_id\":164,\"team\":2,\"role\":\"scout\"},{\"shift_id\":164,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":165,\"team\":1,\"role\":\"leader\"},{\"shift_id\":165,\"team\":1,\"role\":\"scout\"},{\"shift_id\":165,\"team\":2,\"role\":\"leader\"},{\"shift_id\":165,\"team\":2,\"role\":\"scout\"},{\"shift_id\":166,\"team\":1,\"role\":\"leader\"},{\"shift_id\":166,\"team\":1,\"role\":\"scout\"},{\"shift_id\":166,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":166,\"team\":2,\"role\":\"leader\"},{\"shift_id\":166,\"team\":2,\"role\":\"scout\"},{\"shift_id\":166,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":167,\"team\":1,\"role\":\"leader\"},{\"shift_id\":167,\"team\":1,\"role\":\"scout\"},{\"shift_id\":167,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":167,\"team\":2,\"role\":\"leader\"},{\"shift_id\":167,\"team\":2,\"role\":\"scout\"},{\"shift_id\":167,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":168,\"team\":1,\"role\":\"leader\"},{\"shift_id\":168,\"team\":1,\"role\":\"scout\"},{\"shift_id\":168,\"team\":2,\"role\":\"leader\"},{\"shift_id\":168,\"team\":2,\"role\":\"scout\"},{\"shift_id\":169,\"team\":1,\"role\":\"leader\"},{\"shift_id\":169,\"team\":1,\"role\":\"scout\"},{\"shift_id\":169,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":169,\"team\":2,\"role\":\"leader\"},{\"shift_id\":169,\"team\":2,\"role\":\"scout\"},{\"shift_id\":169,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":170,\"team\":1,\"role\":\"leader\"},{\"shift_id\":170,\"team\":1,\"role\":\"scout\"},{\"shift_id\":170,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":170,\"team\":2,\"role\":\"leader\"},{\"shift_id\":170,\"team\":2,\"role\":\"scout\"},{\"shift_id\":170,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":171,\"team\":1,\"role\":\"leader\"},{\"shift_id\":171,\"team\":1,\"role\":\"scout\"},{\"shift_id\":171,\"team\":2,\"role\":\"leader\"},{\"shift_id\":171,\"team\":2,\"role\":\"scout\"},{\"shift_id\":172,\"team\":1,\"role\":\"leader\"},{\"shift_id\":172,\"team\":1,\"role\":\"scout\"},{\"shift_id\":172,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":172,\"team\":2,\"role\":\"leader\"},{\"shift_id\":172,\"team\":2,\"role\":\"scout\"},{\"shift_id\":172,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":173,\"team\":1,\"role\":\"leader\"},{\"shift_id\":173,\"team\":1,\"role\":\"scout\"},{\"shift_id\":173,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":173,\"team\":2,\"role\":\"leader\"},{\"shift_id\":173,\"team\":2,\"role\":\"scout\"},{\"shift_id\":173,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":174,\"team\":1,\"role\":\"leader\"},{\"shift_id\":174,\"team\":1,\"role\":\"scout\"},{\"shift_id\":174,\"team\":2,\"role\":\"leader\"},{\"shift_id\":174,\"team\":2,\"role\":\"scout\"},{\"shift_id\":175,\"team\":1,\"role\":\"leader\"},{\"shift_id\":175,\"team\":1,\"role\":\"scout\"},{\"shift_id\":175,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":175,\"team\":2,\"role\":\"leader\"},{\"shift_id\":175,\"team\":2,\"role\":\"scout\"},{\"shift_id\":175,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":176,\"team\":1,\"role\":\"leader\"},{\"shift_id\":176,\"team\":1,\"role\":\"scout\"},{\"shift_id\":176,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":176,\"team\":2,\"role\":\"leader\"},{\"shift_id\":176,\"team\":2,\"role\":\"scout\"},{\"shift_id\":176,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":177,\"team\":1,\"role\":\"leader\"},{\"shift_id\":177,\"team\":1,\"role\":\"scout\"},{\"shift_id\":177,\"team\":2,\"role\":\"leader\"},{\"shift_id\":177,\"team\":2,\"role\":\"scout\"},{\"shift_id\":178,\"team\":1,\"role\":\"leader\"},{\"shift_id\":178,\"team\":1,\"role\":\"scout\"},{\"shift_id\":178,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":178,\"team\":2,\"role\":\"leader\"},{\"shift_id\":178,\"team\":2,\"role\":\"scout\"},{\"shift_id\":178,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":179,\"team\":1,\"role\":\"leader\"},{\"shift_id\":179,\"team\":1,\"role\":\"scout\"},{\"shift_id\":179,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":179,\"team\":2,\"role\":\"leader\"},{\"shift_id\":179,\"team\":2,\"role\":\"scout\"},{\"shift_id\":179,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":180,\"team\":1,\"role\":\"leader\"},{\"shift_id\":180,\"team\":1,\"role\":\"scout\"},{\"shift_id\":180,\"team\":2,\"role\":\"leader\"},{\"shift_id\":180,\"team\":2,\"role\":\"scout\"},{\"shift_id\":181,\"team\":1,\"role\":\"leader\"},{\"shift_id\":181,\"team\":1,\"role\":\"scout\"},{\"shift_id\":181,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":181,\"team\":2,\"role\":\"leader\"},{\"shift_id\":181,\"team\":2,\"role\":\"scout\"},{\"shift_id\":181,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":182,\"team\":1,\"role\":\"leader\"},{\"shift_id\":182,\"team\":1,\"role\":\"scout\"},{\"shift_id\":182,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":182,\"team\":2,\"role\":\"leader\"},{\"shift_id\":182,\"team\":2,\"role\":\"scout\"},{\"shift_id\":182,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":183,\"team\":1,\"role\":\"leader\"},{\"shift_id\":183,\"team\":1,\"role\":\"scout\"},{\"shift_id\":183,\"team\":2,\"role\":\"leader\"},{\"shift_id\":183,\"team\":2,\"role\":\"scout\"},{\"shift_id\":184,\"team\":1,\"role\":\"leader\"},{\"shift_id\":184,\"team\":1,\"role\":\"scout\"},{\"shift_id\":184,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":184,\"team\":2,\"role\":\"leader\"},{\"shift_id\":184,\"team\":2,\"role\":\"scout\"},{\"shift_id\":184,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":185,\"team\":1,\"role\":\"leader\"},{\"shift_id\":185,\"team\":1,\"role\":\"scout\"},{\"shift_id\":185,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":185,\"team\":2,\"role\":\"leader\"},{\"shift_id\":185,\"team\":2,\"role\":\"scout\"},{\"shift_id\":185,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":186,\"team\":1,\"role\":\"leader\"},{\"shift_id\":186,\"team\":1,\"role\":\"scout\"},{\"shift_id\":186,\"team\":2,\"role\":\"leader\"},{\"shift_id\":186,\"team\":2,\"role\":\"scout\"},{\"shift_id\":187,\"team\":1,\"role\":\"leader\"},{\"shift_id\":187,\"team\":1,\"role\":\"scout\"},{\"shift_id\":187,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":187,\"team\":2,\"role\":\"leader\"},{\"shift_id\":187,\"team\":2,\"role\":\"scout\"},{\"shift_id\":187,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":188,\"team\":1,\"role\":\"leader\"},{\"shift_id\":188,\"team\":1,\"role\":\"scout\"},{\"shift_id\":188,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":188,\"team\":2,\"role\":\"leader\"},{\"shift_id\":188,\"team\":2,\"role\":\"scout\"},{\"shift_id\":188,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":189,\"team\":1,\"role\":\"leader\"},{\"shift_id\":189,\"team\":1,\"role\":\"scout\"},{\"shift_id\":189,\"team\":2,\"role\":\"leader\"},{\"shift_id\":189,\"team\":2,\"role\":\"scout\"},{\"shift_id\":190,\"team\":1,\"role\":\"leader\"},{\"shift_id\":190,\"team\":1,\"role\":\"scout\"},{\"shift_id\":190,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":190,\"team\":2,\"role\":\"leader\"},{\"shift_id\":190,\"team\":2,\"role\":\"scout\"},{\"shift_id\":190,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":191,\"team\":1,\"role\":\"leader\"},{\"shift_id\":191,\"team\":1,\"role\":\"scout\"},{\"shift_id\":191,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":191,\"team\":2,\"role\":\"leader\"},{\"shift_id\":191,\"team\":2,\"role\":\"scout\"},{\"shift_id\":191,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":192,\"team\":1,\"role\":\"leader\"},{\"shift_id\":192,\"team\":1,\"role\":\"scout\"},{\"shift_id\":192,\"team\":2,\"role\":\"leader\"},{\"shift_id\":192,\"team\":2,\"role\":\"scout\"},{\"shift_id\":193,\"team\":1,\"role\":\"leader\"},{\"shift_id\":193,\"team\":1,\"role\":\"scout\"},{\"shift_id\":193,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":193,\"team\":2,\"role\":\"leader\"},{\"shift_id\":193,\"team\":2,\"role\":\"scout\"},{\"shift_id\":193,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":194,\"team\":1,\"role\":\"leader\"},{\"shift_id\":194,\"team\":1,\"role\":\"scout\"},{\"shift_id\":194,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":194,\"team\":2,\"role\":\"leader\"},{\"shift_id\":194,\"team\":2,\"role\":\"scout\"},{\"shift_id\":194,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":195,\"team\":1,\"role\":\"leader\"},{\"shift_id\":195,\"team\":1,\"role\":\"scout\"},{\"shift_id\":195,\"team\":2,\"role\":\"leader\"},{\"shift_id\":195,\"team\":2,\"role\":\"scout\"},{\"shift_id\":196,\"team\":1,\"role\":\"leader\"},{\"shift_id\":196,\"team\":1,\"role\":\"scout\"},{\"shift_id\":196,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":196,\"team\":2,\"role\":\"leader\"},{\"shift_id\":196,\"team\":2,\"role\":\"scout\"},{\"shift_id\":196,\"team\":2,\"role\":\"paramedic\"},{\"shift_id\":197,\"team\":1,\"role\":\"leader\"},{\"shift_id\":197,\"team\":1,\"role\":\"scout\"},{\"shift_id\":197,\"team\":1,\"role\":\"paramedic\"},{\"shift_id\":197,\"team\":2,\"role\":\"leader\"},{\"shift_id\":197,\"team\":2,\"role\":\"scout\"},{\"shift_id\":197,\"team\":2,\"role\":\"paramedic\"}]}",
+            "error": null
+        },
+        "assignments": [
+            {
+                "id": 11,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-01",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 13,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-02",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 15,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-03",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 17,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-04",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 19,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-05",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 21,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-06",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 23,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-07",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 25,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-08",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 27,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-09",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 29,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-10",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 31,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-11",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 33,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-12",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 35,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-13",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 37,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-14",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 39,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-15",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 41,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-16",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 43,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-17",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 45,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-18",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 47,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-19",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 49,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-20",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 51,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-21",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 53,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-22",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 55,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-23",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 57,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-24",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 59,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-25",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 61,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-26",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 63,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-27",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 65,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-28",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 67,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-29",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 69,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-30",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 71,
+                "user_id": 5,
+                "name": "Paramedic User",
+                "role": "paramedic",
+                "date": "2026-07-31",
+                "type": "morning",
+                "team_number": 1
+            },
+            {
+                "id": 12,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-01",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 14,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-02",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 16,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-03",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 18,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-04",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 20,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-05",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 22,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-06",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 24,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-07",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 26,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-08",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 28,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-09",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 30,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-10",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 32,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-11",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 34,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-12",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 36,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-13",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 38,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-14",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 40,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-15",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 42,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-16",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 44,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-17",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 46,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-18",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 48,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-19",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 50,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-20",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 52,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-21",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 54,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-22",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 56,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-23",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 58,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-24",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 60,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-25",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 62,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-26",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 64,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-27",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 66,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-28",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 68,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-29",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 70,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-30",
+                "type": "morning",
+                "team_number": 2
+            },
+            {
+                "id": 72,
+                "user_id": 8,
+                "name": "Paramedic Two",
+                "role": "paramedic",
+                "date": "2026-07-31",
+                "type": "morning",
+                "team_number": 2
+            }
+        ],
+        "publish": {
+            "http_code": 200,
+            "body": "{\"message\":\"Published\"}",
+            "error": null
+        },
+        "plan_final": [
+            {
+                "id": 3,
+                "month": 7,
+                "year": 2026,
+                "status": "published",
+                "published_at": "2026-06-15 23:10:45"
+            }
+        ]
+    },
+    "phase2": {
+        "A": {
+            "before": [
+                {
+                    "id": 1,
+                    "shift_id": 2,
+                    "user_id": 5,
+                    "role": "paramedic",
+                    "team_number": 1,
+                    "assigned_at": "2026-06-15 15:25:37",
+                    "created_at": "2026-06-15 15:25:37",
+                    "updated_at": "2026-06-15 15:25:37",
+                    "vehicle_id": null
+                },
+                {
+                    "id": 2,
+                    "shift_id": 3,
+                    "user_id": 8,
+                    "role": "paramedic",
+                    "team_number": 1,
+                    "assigned_at": "2026-06-15 15:25:37",
+                    "created_at": "2026-06-15 15:25:37",
+                    "updated_at": "2026-06-15 15:25:37",
+                    "vehicle_id": null
+                }
+            ],
+            "roles": {
+                "requester": "paramedic",
+                "target": "paramedic"
+            },
+            "create": {
+                "http_code": 403,
+                "body": "{\"message\":\"Forbidden\"}",
+                "error": null
+            },
+            "after": [
+                {
+                    "id": 1,
+                    "shift_id": 2,
+                    "user_id": 5,
+                    "role": "paramedic",
+                    "team_number": 1,
+                    "assigned_at": "2026-06-15 15:25:37",
+                    "created_at": "2026-06-15 15:25:37",
+                    "updated_at": "2026-06-15 15:25:37",
+                    "vehicle_id": null
+                },
+                {
+                    "id": 2,
+                    "shift_id": 3,
+                    "user_id": 8,
+                    "role": "paramedic",
+                    "team_number": 1,
+                    "assigned_at": "2026-06-15 15:25:37",
+                    "created_at": "2026-06-15 15:25:37",
+                    "updated_at": "2026-06-15 15:25:37",
+                    "vehicle_id": null
+                }
+            ],
+            "swap_ok": null,
+            "dup_ok": null
+        },
+        "B": {
+            "before": [
+                {
+                    "id": 3,
+                    "shift_id": 4,
+                    "user_id": 9,
+                    "role": "scout",
+                    "team_number": 1,
+                    "assigned_at": "2026-06-15 15:25:37",
+                    "created_at": "2026-06-15 15:25:37",
+                    "updated_at": "2026-06-15 15:25:37",
+                    "vehicle_id": null
+                },
+                {
+                    "id": 4,
+                    "shift_id": 5,
+                    "user_id": 10,
+                    "role": "scout",
+                    "team_number": 1,
+                    "assigned_at": "2026-06-15 15:25:37",
+                    "created_at": "2026-06-15 15:25:37",
+                    "updated_at": "2026-06-15 15:25:37",
+                    "vehicle_id": null
+                }
+            ],
+            "roles": {
+                "requester": "scout",
+                "target": "scout"
+            },
+            "create": {
+                "http_code": 403,
+                "body": "{\"message\":\"Forbidden\"}",
+                "error": null
+            },
+            "after": [
+                {
+                    "id": 3,
+                    "shift_id": 4,
+                    "user_id": 9,
+                    "role": "scout",
+                    "team_number": 1,
+                    "assigned_at": "2026-06-15 15:25:37",
+                    "created_at": "2026-06-15 15:25:37",
+                    "updated_at": "2026-06-15 15:25:37",
+                    "vehicle_id": null
+                },
+                {
+                    "id": 4,
+                    "shift_id": 5,
+                    "user_id": 10,
+                    "role": "scout",
+                    "team_number": 1,
+                    "assigned_at": "2026-06-15 15:25:37",
+                    "created_at": "2026-06-15 15:25:37",
+                    "updated_at": "2026-06-15 15:25:37",
+                    "vehicle_id": null
+                }
+            ],
+            "swap_ok": null,
+            "dup_ok": null
+        },
+        "C": {
+            "before": [
+                {
+                    "id": 5,
+                    "shift_id": 6,
+                    "user_id": 11,
+                    "role": "leader",
+                    "team_number": 1,
+                    "assigned_at": "2026-06-15 15:25:37",
+                    "created_at": "2026-06-15 15:25:37",
+                    "updated_at": "2026-06-15 15:25:37",
+                    "vehicle_id": null
+                },
+                {
+                    "id": 6,
+                    "shift_id": 7,
+                    "user_id": 12,
+                    "role": "leader",
+                    "team_number": 1,
+                    "assigned_at": "2026-06-15 15:25:37",
+                    "created_at": "2026-06-15 15:25:37",
+                    "updated_at": "2026-06-15 15:25:37",
+                    "vehicle_id": null
+                }
+            ],
+            "roles": {
+                "requester": "leader",
+                "target": "leader"
+            },
+            "create": {
+                "http_code": 403,
+                "body": "{\"message\":\"Forbidden\"}",
+                "error": null
+            },
+            "after": [
+                {
+                    "id": 5,
+                    "shift_id": 6,
+                    "user_id": 11,
+                    "role": "leader",
+                    "team_number": 1,
+                    "assigned_at": "2026-06-15 15:25:37",
+                    "created_at": "2026-06-15 15:25:37",
+                    "updated_at": "2026-06-15 15:25:37",
+                    "vehicle_id": null
+                },
+                {
+                    "id": 6,
+                    "shift_id": 7,
+                    "user_id": 12,
+                    "role": "leader",
+                    "team_number": 1,
+                    "assigned_at": "2026-06-15 15:25:37",
+                    "created_at": "2026-06-15 15:25:37",
+                    "updated_at": "2026-06-15 15:25:37",
+                    "vehicle_id": null
+                }
+            ],
+            "swap_ok": null,
+            "dup_ok": null
+        },
+        "D": {
+            "before": [
+                {
+                    "id": 1,
+                    "shift_id": 2,
+                    "user_id": 5,
+                    "role": "paramedic",
+                    "team_number": 1,
+                    "assigned_at": "2026-06-15 15:25:37",
+                    "created_at": "2026-06-15 15:25:37",
+                    "updated_at": "2026-06-15 15:25:37",
+                    "vehicle_id": null
+                },
+                {
+                    "id": 3,
+                    "shift_id": 4,
+                    "user_id": 9,
+                    "role": "scout",
+                    "team_number": 1,
+                    "assigned_at": "2026-06-15 15:25:37",
+                    "created_at": "2026-06-15 15:25:37",
+                    "updated_at": "2026-06-15 15:25:37",
+                    "vehicle_id": null
+                }
+            ],
+            "roles": {
+                "requester": "paramedic",
+                "target": "scout"
+            },
+            "create": {
+                "http_code": 422,
+                "body": "{\"message\":\"Swap allowed only between same roles\"}",
+                "error": null
+            },
+            "after": [
+                {
+                    "id": 1,
+                    "shift_id": 2,
+                    "user_id": 5,
+                    "role": "paramedic",
+                    "team_number": 1,
+                    "assigned_at": "2026-06-15 15:25:37",
+                    "created_at": "2026-06-15 15:25:37",
+                    "updated_at": "2026-06-15 15:25:37",
+                    "vehicle_id": null
+                },
+                {
+                    "id": 3,
+                    "shift_id": 4,
+                    "user_id": 9,
+                    "role": "scout",
+                    "team_number": 1,
+                    "assigned_at": "2026-06-15 15:25:37",
+                    "created_at": "2026-06-15 15:25:37",
+                    "updated_at": "2026-06-15 15:25:37",
+                    "vehicle_id": null
+                }
+            ],
+            "swap_ok": null,
+            "dup_ok": null
+        },
+        "E": {
+            "before": [
+                {
+                    "id": 3,
+                    "shift_id": 4,
+                    "user_id": 9,
+                    "role": "scout",
+                    "team_number": 1,
+                    "assigned_at": "2026-06-15 15:25:37",
+                    "created_at": "2026-06-15 15:25:37",
+                    "updated_at": "2026-06-15 15:25:37",
+                    "vehicle_id": null
+                },
+                {
+                    "id": 5,
+                    "shift_id": 6,
+                    "user_id": 11,
+                    "role": "leader",
+                    "team_number": 1,
+                    "assigned_at": "2026-06-15 15:25:37",
+                    "created_at": "2026-06-15 15:25:37",
+                    "updated_at": "2026-06-15 15:25:37",
+                    "vehicle_id": null
+                }
+            ],
+            "roles": {
+                "requester": "scout",
+                "target": "leader"
+            },
+            "create": {
+                "http_code": 422,
+                "body": "{\"message\":\"Swap allowed only between same roles\"}",
+                "error": null
+            },
+            "after": [
+                {
+                    "id": 3,
+                    "shift_id": 4,
+                    "user_id": 9,
+                    "role": "scout",
+                    "team_number": 1,
+                    "assigned_at": "2026-06-15 15:25:37",
+                    "created_at": "2026-06-15 15:25:37",
+                    "updated_at": "2026-06-15 15:25:37",
+                    "vehicle_id": null
+                },
+                {
+                    "id": 5,
+                    "shift_id": 6,
+                    "user_id": 11,
+                    "role": "leader",
+                    "team_number": 1,
+                    "assigned_at": "2026-06-15 15:25:37",
+                    "created_at": "2026-06-15 15:25:37",
+                    "updated_at": "2026-06-15 15:25:37",
+                    "vehicle_id": null
+                }
+            ],
+            "swap_ok": null,
+            "dup_ok": null
+        }
+    }
+}

@@ -1,0 +1,376 @@
+Using Shift Plan ID: 3
+
+--- Testing Paramedic Swap ---
+Requester Assignment ID: 11 (User: 5)
+Target Assignment ID: 12 (User: 8)
+DB State Before:
+[
+    {
+        "id": 11,
+        "user_id": 5,
+        "shift_id": 105,
+        "role": "paramedic"
+    },
+    {
+        "id": 12,
+        "user_id": 8,
+        "shift_id": 105,
+        "role": "paramedic"
+    }
+]
+CREATE RESPONSE: 201
+{"id":3,"requester_assignment_id":11,"target_assignment_id":12,"reason":"E2E Paramedic Swap","status":"pending","approved_by":null,"approved_at":null,"created_at":"2026-06-15T23:21:51.000000Z"}
+
+ACCEPT RESPONSE: 500
+{
+    "message": "SQLSTATE[01000]: Warning: 1265 Data truncated for column 'status' at row 1 (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: ems_api, SQL: update `shift_requests` set `status` = accepted_by_target, `shift_requests`.`updated_at` = 2026-06-15 23:21:51 where `id` = 3)",
+    "exception": "Illuminate\\Database\\QueryException",
+    "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php",
+    "line": 838,
+    "trace": [
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php",
+            "line": 794,
+            "function": "runQueryCallback",
+            "class": "Illuminate\\Database\\Connection",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php",
+            "line": 597,
+            "function": "run",
+            "class": "Illuminate\\Database\\Connection",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php",
+            "line": 549,
+            "function": "affectingStatement",
+            "class": "Illuminate\\Database\\Connection",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php",
+            "line": 4234,
+            "function": "update",
+            "class": "Illuminate\\Database\\Connection",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Eloquent\\Builder.php",
+            "line": 1266,
+            "function": "update",
+            "class": "Illuminate\\Database\\Query\\Builder",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Eloquent\\Model.php",
+            "line": 1316,
+            "function": "update",
+            "class": "Illuminate\\Database\\Eloquent\\Builder",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Eloquent\\Model.php",
+            "line": 1233,
+            "function": "performUpdate",
+            "class": "Illuminate\\Database\\Eloquent\\Model",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\app\\Http\\Controllers\\ShiftRequestController.php",
+            "line": 79,
+            "function": "save",
+            "class": "Illuminate\\Database\\Eloquent\\Model",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\ControllerDispatcher.php",
+            "line": 46,
+            "function": "accept",
+            "class": "App\\Http\\Controllers\\ShiftRequestController",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php",
+            "line": 265,
+            "function": "dispatch",
+            "class": "Illuminate\\Routing\\ControllerDispatcher",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php",
+            "line": 211,
+            "function": "runController",
+            "class": "Illuminate\\Routing\\Route",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php",
+            "line": 822,
+            "function": "run",
+            "class": "Illuminate\\Routing\\Route",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+            "line": 180,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php",
+            "line": 50,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Auth\\Middleware\\Authenticate.php",
+            "line": 63,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Auth\\Middleware\\Authenticate",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+            "line": 137,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php",
+            "line": 821,
+            "function": "then",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php",
+            "line": 800,
+            "function": "runRouteWithinStack",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php",
+            "line": 764,
+            "function": "runRoute",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php",
+            "line": 753,
+            "function": "dispatchToRoute",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php",
+            "line": 200,
+            "function": "dispatch",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+            "line": 180,
+            "function": "Illuminate\\Foundation\\Http\\{closure}",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php",
+            "line": 21,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php",
+            "line": 31,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php",
+            "line": 21,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php",
+            "line": 51,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TrimStrings",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\ValidatePostSize.php",
+            "line": 27,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Http\\Middleware\\ValidatePostSize",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php",
+            "line": 109,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php",
+            "line": 74,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Http\\Middleware\\HandleCors",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php",
+            "line": 58,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Http\\Middleware\\TrustProxies",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks.php",
+            "line": 22,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\ValidatePathEncoding.php",
+            "line": 26,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Http\\Middleware\\ValidatePathEncoding",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+            "line": 137,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php",
+            "line": 175,
+            "function": "then",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php",
+            "line": 144,
+            "function": "sendRequestThroughRouter",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\tools\\e2e_swaps_only.php",
+            "line": 21,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "->"
+        },
+        {
+            "file": "C:\\Users\\jmad3\\Desktop\\graduation project complete\\final_project_backend_laravel\\tools\\e2e_swaps_only.php",
+            "line": 149,
+            "function": "http_post_local"
+        }
+    ]
+}
+
+--- Testing Cross Role Validation ---
+
+====================
+| Test | Result |
+| --- | --- |
+| Leader Swap | FAIL |
+| Scout Swap | FAIL |
+| Paramedic Swap | FAIL |
+| Cross Role Validation | FAIL |
+| Database Integrity | PASS |
+====================
+
+Failure details for Paramedic Swap: Accept failed. HTTP 500
+Failure details for Scout Swap: Could not find 2 distinct user assignments for role.
+Failure details for Leader Swap: Could not find 2 distinct user assignments for role.
+Failure details for Cross Role Validation: Could not find users for cross role swap.
