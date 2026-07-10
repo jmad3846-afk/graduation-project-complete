@@ -35,6 +35,12 @@ class ReservationService {
       return response.data['reservation_id'] as int;
     } on DioException catch (e) {
       if (e.response?.statusCode == 409) {
+        final backendMessage = e.response?.data is Map
+            ? e.response?.data['message'] as String?
+            : null;
+        if (backendMessage != null && backendMessage.contains('already have another reservation')) {
+          throw ReservationConflictException('You already reserved another center during this shift.');
+        }
         throw ReservationConflictException();
       }
       rethrow;

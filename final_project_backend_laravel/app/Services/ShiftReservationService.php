@@ -35,6 +35,18 @@ class ShiftReservationService
                 throw new ConflictHttpException('Slot already reserved');
             }
 
+            // A user cannot hold a reservation in a different center for the
+            // same day + shift at the same time (regardless of rank/center).
+            $userConflict = ShiftPollReservation::where('shift_plan_id', $shiftPlanId)
+                ->where('user_id', $userId)
+                ->where('day', $day)
+                ->where('shift_type', $shift)
+                ->first();
+
+            if ($userConflict) {
+                throw new ConflictHttpException('You already have another reservation during this shift.');
+            }
+
             $reservation = ShiftPollReservation::create([
                 'shift_plan_id' => $shiftPlanId,
                 'center_id'  => $centerId,

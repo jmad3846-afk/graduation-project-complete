@@ -303,6 +303,113 @@ class ShiftPollReservationTest extends TestCase
         $response->assertJsonFragment(['center_id' => $center->id, 'day' => 6, 'shift_type' => 'evening', 'rank' => 'leader', 'status' => 'confirmed']);
     }
 
+    public function test_user_cannot_reserve_same_day_and_shift_in_a_different_center(): void
+    {
+        $plan = $this->makePlan();
+        $centerYarmouk = $this->makeCenter('Yarmouk');
+        $centerJaramana = $this->makeCenter('Jaramana');
+        $leader = $this->makeUser('leader');
+        $this->makePollFor($plan, $leader, 'leader');
+
+        $this->actingAs($leader)->postJson("/api/shift-plans/{$plan->id}/reserve", [
+            'center_id' => $centerYarmouk->id,
+            'day' => 1,
+            'shift_type' => 'morning',
+            'rank' => 'leader',
+        ])->assertStatus(201);
+
+        $response = $this->actingAs($leader)->postJson("/api/shift-plans/{$plan->id}/reserve", [
+            'center_id' => $centerJaramana->id,
+            'day' => 1,
+            'shift_type' => 'morning',
+            'rank' => 'leader',
+        ]);
+
+        $response->assertStatus(409);
+        $response->assertJson(['message' => 'You already have another reservation during this shift.']);
+
+        $this->assertSame(1, ShiftPollReservation::where('shift_plan_id', $plan->id)
+            ->where('user_id', $leader->id)
+            ->where('day', 1)->where('shift_type', 'morning')->count());
+    }
+
+    public function test_user_can_reserve_same_day_different_shift_in_another_center(): void
+    {
+        $plan = $this->makePlan();
+        $centerYarmouk = $this->makeCenter('Yarmouk');
+        $centerJaramana = $this->makeCenter('Jaramana');
+        $leader = $this->makeUser('leader');
+        $this->makePollFor($plan, $leader, 'leader');
+
+        $this->actingAs($leader)->postJson("/api/shift-plans/{$plan->id}/reserve", [
+            'center_id' => $centerYarmouk->id,
+            'day' => 1,
+            'shift_type' => 'morning',
+            'rank' => 'leader',
+        ])->assertStatus(201);
+
+        $response = $this->actingAs($leader)->postJson("/api/shift-plans/{$plan->id}/reserve", [
+            'center_id' => $centerJaramana->id,
+            'day' => 1,
+            'shift_type' => 'evening',
+            'rank' => 'leader',
+        ]);
+
+        $response->assertStatus(201);
+    }
+
+    public function test_user_can_reserve_same_shift_different_day_in_another_center(): void
+    {
+        $plan = $this->makePlan();
+        $centerYarmouk = $this->makeCenter('Yarmouk');
+        $centerJaramana = $this->makeCenter('Jaramana');
+        $leader = $this->makeUser('leader');
+        $this->makePollFor($plan, $leader, 'leader');
+
+        $this->actingAs($leader)->postJson("/api/shift-plans/{$plan->id}/reserve", [
+            'center_id' => $centerYarmouk->id,
+            'day' => 1,
+            'shift_type' => 'morning',
+            'rank' => 'leader',
+        ])->assertStatus(201);
+
+        $response = $this->actingAs($leader)->postJson("/api/shift-plans/{$plan->id}/reserve", [
+            'center_id' => $centerJaramana->id,
+            'day' => 2,
+            'shift_type' => 'morning',
+            'rank' => 'leader',
+        ]);
+
+        $response->assertStatus(201);
+    }
+
+    public function test_user_conflict_does_not_affect_a_different_user(): void
+    {
+        $plan = $this->makePlan();
+        $centerYarmouk = $this->makeCenter('Yarmouk');
+        $centerJaramana = $this->makeCenter('Jaramana');
+        $leaderA = $this->makeUser('leader');
+        $leaderB = $this->makeUser('leader');
+        $this->makePollFor($plan, $leaderA, 'leader');
+        $this->makePollFor($plan, $leaderB, 'leader');
+
+        $this->actingAs($leaderA)->postJson("/api/shift-plans/{$plan->id}/reserve", [
+            'center_id' => $centerYarmouk->id,
+            'day' => 1,
+            'shift_type' => 'morning',
+            'rank' => 'leader',
+        ])->assertStatus(201);
+
+        $response = $this->actingAs($leaderB)->postJson("/api/shift-plans/{$plan->id}/reserve", [
+            'center_id' => $centerJaramana->id,
+            'day' => 1,
+            'shift_type' => 'morning',
+            'rank' => 'leader',
+        ]);
+
+        $response->assertStatus(201);
+    }
+
     public function test_reservation_requires_authentication(): void
     {
         $user = $this->makeUser('leader');
