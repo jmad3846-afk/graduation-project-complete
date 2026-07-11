@@ -133,6 +133,12 @@ class ShiftRequestController extends Controller
     {
         $user = $request->user();
 
+        if (in_array($user->role, ['admin', 'manager'])) {
+            $requests = ShiftRequest::orderByDesc('created_at')->get();
+
+            return ShiftRequestResource::collection($requests);
+        }
+
         // requests where user is requester or target
         $requests = ShiftRequest::whereHas('requesterAssignment', function ($q) use ($user) {
             $q->where('user_id', $user->id);
