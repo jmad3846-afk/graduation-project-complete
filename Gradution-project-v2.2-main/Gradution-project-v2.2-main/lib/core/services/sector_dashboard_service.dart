@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:ems_op_room/core/network/api_service.dart';
 
 class SectorDashboardService {

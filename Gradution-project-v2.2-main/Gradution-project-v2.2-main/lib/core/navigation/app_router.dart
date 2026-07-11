@@ -13,7 +13,7 @@ import 'package:ems_op_room/presentation/settings/setting.dart';
 import 'package:ems_op_room/presentation/CEO/components/fleet_monitoring_screen.dart';
 import 'package:ems_op_room/presentation/CEO/components/shift_exchange_screen.dart';
 import 'package:ems_op_room/presentation/CEO/components/shift_management_page.dart';
-import 'package:ems_op_room/presentation/CEO/components/placeholder_screen.dart';
+import 'package:ems_op_room/presentation/CEO/components/schedule_distribution_page.dart';
 
 // Router Keys
 class AppRouteKeys {
@@ -159,9 +159,13 @@ final appRouter = GoRouter(
         GoRoute(
           path: 'schedule',
           name: 'Schedule Distribution',
-          pageBuilder: (context, state) => CustomTransition(
-            child: const PlaceholderScreen(title: 'توزيع الجدول'),
-          ),
+          pageBuilder: (context, state) {
+            final planIdParam = state.uri.queryParameters['planId'];
+            final planId = planIdParam != null ? int.tryParse(planIdParam) : null;
+            return CustomTransition(
+              child: ScheduleDistributionPage(planId: planId),
+            );
+          },
         ),
         GoRoute(
           path: 'exchange',

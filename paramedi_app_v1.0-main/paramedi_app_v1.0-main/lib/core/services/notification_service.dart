@@ -1,4 +1,4 @@
-
+import 'package:flutter/foundation.dart';
 import '../models/notification_model.dart';
 import '../network/api_service.dart';
 
@@ -15,7 +15,7 @@ class NotificationService {
         return data.map((json) => NotificationModel.fromJson(json)).toList();
       }
     } catch (e) {
-      print('Fetch notifications error: $e');
+      debugPrint('Fetch notifications error: $e');
     }
     return [];
   }

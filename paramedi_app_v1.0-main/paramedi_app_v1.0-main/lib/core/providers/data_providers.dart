@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/case_model.dart';
 import '../models/vehicle_model.dart';
+import '../models/my_schedule_model.dart';
 import '../models/shift_assignment_model.dart';
 import '../models/shift_poll_model.dart';
 import '../models/shift_request_model.dart';
@@ -22,6 +23,10 @@ final currentPollProvider = FutureProvider<ShiftPollModel?>((ref) async {
 
 final myScheduleProvider = FutureProvider<List<ShiftAssignmentModel>>((ref) async {
   return await ref.read(shiftServiceProvider).fetchMySchedule();
+});
+
+final myScheduleWithCompensationProvider = FutureProvider<MyScheduleModel>((ref) async {
+  return await ref.read(shiftServiceProvider).fetchMyScheduleWithCompensation();
 });
 
 final shiftRequestListProvider = FutureProvider<List<ShiftRequestModel>>((ref) async {

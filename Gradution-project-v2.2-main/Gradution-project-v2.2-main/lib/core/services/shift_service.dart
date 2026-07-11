@@ -1,4 +1,4 @@
-
+import 'package:flutter/foundation.dart';
 import '../models/shift_model.dart';
 import '../network/api_service.dart';
 
@@ -17,7 +17,7 @@ class ShiftService {
         return data.map((json) => ShiftModel.fromJson(json)).toList();
       }
     } catch (e) {
-      print('Fetch shifts error: $e');
+      debugPrint('Fetch shifts error: $e');
     }
     return [];
   }

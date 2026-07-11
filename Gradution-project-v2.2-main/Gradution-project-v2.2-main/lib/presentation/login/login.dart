@@ -90,7 +90,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       onPressed: () async {
                         final success = await ref.read(authNotifierProvider.notifier)
                             .login(_idController.text, _passwordController.text);
-                        if (success && mounted) {
+                        if (!context.mounted) return;
+
+                        if (success) {
                           final user = ref.read(authNotifierProvider).user;
                           final role = user?.role ?? '';
                           if (role == 'admin') {
@@ -108,7 +110,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           } else {
                             context.go('/welcome');
                           }
-                        } else if (mounted) {
+                        } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Login failed')),
                           );

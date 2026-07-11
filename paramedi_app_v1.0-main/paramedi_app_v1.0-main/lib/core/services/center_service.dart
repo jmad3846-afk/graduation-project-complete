@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import '../models/center_model.dart';
 import '../network/api_service.dart';
 
@@ -16,7 +17,7 @@ class CenterService {
             .toList();
       }
     } catch (e) {
-      print('Fetch centers error: $e');
+      debugPrint('Fetch centers error: $e');
     }
     return const [];
   }

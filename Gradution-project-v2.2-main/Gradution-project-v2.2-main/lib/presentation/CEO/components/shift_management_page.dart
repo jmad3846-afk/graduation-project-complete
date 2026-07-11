@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ems_op_room/core/providers/shift_management_provider.dart';
 import 'package:ems_op_room/core/models/shift_plan_model.dart';
 import 'package:ems_op_room/core/models/swap_request_model.dart';
@@ -115,7 +116,7 @@ class _ShiftManagementPageState extends ConsumerState<ShiftManagementPage> {
         color = Colors.deepOrange;
         break;
       case 'building':
-        label = 'جاري البناء';
+        label = 'تم البناء - جاهز للنشر';
         color = Colors.purple;
         break;
       case 'published':
@@ -160,7 +161,7 @@ class _ShiftManagementPageState extends ConsumerState<ShiftManagementPage> {
     );
   }
 
-  Widget _buildPlansTable(List<ShiftPlanModel> plans) {
+  Widget _buildPlansTable(List<ShiftPlanModel> plans, bool isBusy) {
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -198,37 +199,37 @@ class _ShiftManagementPageState extends ConsumerState<ShiftManagementPage> {
                           IconButton(
                             tooltip: 'بدء استطلاع القادة',
                             icon: const Icon(Icons.record_voice_over, color: Colors.orange),
-                            onPressed: () => ref.read(shiftManagementProvider.notifier).startLeaderPoll(plan.id),
+                            onPressed: isBusy ? null : () => ref.read(shiftManagementProvider.notifier).startLeaderPoll(plan.id),
                           ),
                         if (plan.status == 'polling_leaders')
                           IconButton(
                             tooltip: 'بدء استطلاع الكشافة',
                             icon: const Icon(Icons.groups, color: Colors.orange),
-                            onPressed: () => ref.read(shiftManagementProvider.notifier).startScoutPoll(plan.id),
+                            onPressed: isBusy ? null : () => ref.read(shiftManagementProvider.notifier).startScoutPoll(plan.id),
                           ),
                         if (plan.status == 'polling_scouts')
                           IconButton(
                             tooltip: 'بدء استطلاع المسعفين',
                             icon: const Icon(Icons.local_hospital, color: Colors.orange),
-                            onPressed: () => ref.read(shiftManagementProvider.notifier).startParamedicPoll(plan.id),
+                            onPressed: isBusy ? null : () => ref.read(shiftManagementProvider.notifier).startParamedicPoll(plan.id),
                           ),
                         if (plan.status == 'polling_paramedics')
                           IconButton(
                             tooltip: 'بناء الجدول',
                             icon: const Icon(Icons.build_circle, color: Colors.purple),
-                            onPressed: () => ref.read(shiftManagementProvider.notifier).buildPlan(plan.id),
+                            onPressed: isBusy ? null : () => ref.read(shiftManagementProvider.notifier).buildPlan(plan.id),
                           ),
                         if (plan.status == 'building')
                           IconButton(
                             tooltip: 'نشر الجدول',
                             icon: const Icon(Icons.publish, color: Colors.green),
-                            onPressed: () => ref.read(shiftManagementProvider.notifier).publishPlan(plan.id),
+                            onPressed: isBusy ? null : () => ref.read(shiftManagementProvider.notifier).publishPlan(plan.id),
                           ),
                         if (plan.status == 'published')
                           IconButton(
                             tooltip: 'إغلاق الخطة',
                             icon: const Icon(Icons.lock, color: Colors.red),
-                            onPressed: () => ref.read(shiftManagementProvider.notifier).closePlan(plan.id),
+                            onPressed: isBusy ? null : () => ref.read(shiftManagementProvider.notifier).closePlan(plan.id),
                           ),
                       ],
                     )),
@@ -341,6 +342,11 @@ class _ShiftManagementPageState extends ConsumerState<ShiftManagementPage> {
         ));
         ref.read(shiftManagementProvider.notifier).clearMessages();
       }
+      if (next.justPublishedPlanId != null) {
+        final planId = next.justPublishedPlanId!;
+        ref.read(shiftManagementProvider.notifier).clearJustPublished();
+        context.push('/dashboard/schedule?planId=$planId');
+      }
     });
 
     return Directionality(
@@ -371,7 +377,7 @@ class _ShiftManagementPageState extends ConsumerState<ShiftManagementPage> {
                       const SizedBox(height: 16),
                       _buildStatistics(state),
                       const SizedBox(height: 32),
-                      _buildPlansTable(state.plans),
+                      _buildPlansTable(state.plans, state.isLoading),
                       const SizedBox(height: 32),
                       _buildSwapRequestsTable(state.swapRequests),
                       const SizedBox(height: 60), // padding for FAB

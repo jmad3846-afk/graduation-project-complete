@@ -1,4 +1,4 @@
-
+import 'package:flutter/foundation.dart';
 import '../models/vehicle_model.dart';
 import '../network/api_service.dart';
 
@@ -15,7 +15,7 @@ class VehicleService {
         return data.map((json) => VehicleModel.fromJson(json)).toList();
       }
     } catch (e) {
-      print('Fetch vehicles error: $e');
+      debugPrint('Fetch vehicles error: $e');
     }
     return [];
   }

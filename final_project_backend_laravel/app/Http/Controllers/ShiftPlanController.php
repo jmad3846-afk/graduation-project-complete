@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreShiftPlanRequest;
 use App\Http\Resources\ShiftPlanResource;
+use App\Models\ShiftAssignment;
 use App\Models\ShiftPlan;
+use App\Services\NotificationService;
 use App\Services\ShiftPlanService;
 use Illuminate\Http\Request;
 
@@ -60,14 +62,44 @@ class ShiftPlanController extends Controller
     public function build($id)
     {
         $plan = ShiftPlan::findOrFail($id);
-        $result = $this->service->buildSchedule($plan);
+
+        try {
+            $result = $this->service->buildSchedule($plan);
+        } catch (\RuntimeException $e) {
+            // A concurrent/duplicate request already moved this plan past
+            // polling_paramedics (e.g. a double-tap of the Build button).
+            // The other request's build stands; tell the client the plan is
+            // already built/beyond that stage instead of a raw 500.
+            $plan->refresh();
+            if (in_array($plan->status, ['building', 'published', 'closed'], true)) {
+                return response()->json([
+                    'message' => 'Schedule already built for this plan',
+                    'status' => $plan->status,
+                ], 200);
+            }
+            return response()->json(['message' => $e->getMessage()], 409);
+        }
+
         return response()->json(['created_assignments' => $result['assignments']->count(), 'unfilled_slots' => $result['unfilled']]);
     }
 
     public function publish($id)
     {
         $plan = ShiftPlan::findOrFail($id);
-        $this->service->publishSchedule($plan);
+
+        try {
+            $this->service->publishSchedule($plan);
+        } catch (\RuntimeException $e) {
+            $plan->refresh();
+            if (in_array($plan->status, ['published', 'closed'], true)) {
+                return response()->json([
+                    'message' => 'Schedule already published for this plan',
+                    'status' => $plan->status,
+                ], 200);
+            }
+            return response()->json(['message' => $e->getMessage()], 409);
+        }
+
         return response()->json(['message' => 'Published']);
     }
 
@@ -76,5 +108,33 @@ class ShiftPlanController extends Controller
         $plan = ShiftPlan::findOrFail($id);
         $this->service->closePlan($plan);
         return response()->json(['message' => 'Closed']);
+    }
+
+    public function schedule($id)
+    {
+        $plan = ShiftPlan::findOrFail($id);
+        return response()->json([
+            'plan' => new ShiftPlanResource($plan),
+            'rows' => $this->service->scheduleGrid($plan),
+        ]);
+    }
+
+    public function sendSchedule($id, NotificationService $notificationService)
+    {
+        $plan = ShiftPlan::findOrFail($id);
+
+        $userIds = ShiftAssignment::whereHas('shift', function ($q) use ($plan) {
+            $q->where('shift_plan_id', $plan->id);
+        })->distinct()->pluck('user_id');
+
+        foreach ($userIds as $userId) {
+            $notificationService->send([
+                'user_id' => $userId,
+                'title' => 'Shift Schedule Published',
+                'message' => "Your shift schedule for {$plan->month}/{$plan->year} is ready. Check My Schedule.",
+            ]);
+        }
+
+        return response()->json(['message' => 'Schedule sent', 'notified_users' => $userIds->count()]);
     }
 }

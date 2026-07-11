@@ -1,4 +1,5 @@
-
+import 'package:flutter/foundation.dart';
+import '../models/my_schedule_model.dart';
 import '../models/shift_assignment_model.dart';
 import '../models/shift_poll_model.dart';
 import '../models/shift_request_model.dart';
@@ -14,6 +15,9 @@ class ShiftService {
     if (payload is Map<String, dynamic> && payload['data'] is List) {
       return payload['data'];
     }
+    if (payload is Map<String, dynamic> && payload['assignments'] is List) {
+      return payload['assignments'];
+    }
     return const [];
   }
 
@@ -27,7 +31,7 @@ class ShiftService {
         return ShiftPollModel.fromJson(Map<String, dynamic>.from(data));
       }
     } catch (e) {
-      print('Fetch current poll error: $e');
+      debugPrint('Fetch current poll error: $e');
     }
     return null;
   }
@@ -48,9 +52,21 @@ class ShiftService {
             .toList();
       }
     } catch (e) {
-      print('Fetch schedule error: $e');
+      debugPrint('Fetch schedule error: $e');
     }
     return const [];
+  }
+
+  Future<MyScheduleModel> fetchMyScheduleWithCompensation() async {
+    try {
+      final response = await _apiService.client.get('/my-schedule');
+      if (response.statusCode == 200 && response.data is Map<String, dynamic>) {
+        return MyScheduleModel.fromJson(response.data as Map<String, dynamic>);
+      }
+    } catch (e) {
+      debugPrint('Fetch schedule with compensation error: $e');
+    }
+    return MyScheduleModel.empty();
   }
 
   Future<List<ShiftRequestModel>> fetchShiftRequests() async {
@@ -62,7 +78,7 @@ class ShiftService {
             .toList();
       }
     } catch (e) {
-      print('Fetch shift requests error: $e');
+      debugPrint('Fetch shift requests error: $e');
     }
     return const [];
   }

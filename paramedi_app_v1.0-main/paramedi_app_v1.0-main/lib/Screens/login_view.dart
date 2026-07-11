@@ -118,14 +118,15 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                 onPressed: () async {
                                   final success = await ref.read(authNotifierProvider.notifier)
                                       .login(_idController.text, _passwordController.text);
-                                  
-                                  if (success && mounted) {
+                                  if (!context.mounted) return;
+
+                                  if (success) {
                                     Navigator.of(context).pushReplacement(
                                       MaterialPageRoute(
                                         builder: (context) => MainDashboard(),
                                       ),
                                     );
-                                  } else if (mounted) {
+                                  } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(content: Text('Login failed')),
                                     );

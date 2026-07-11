@@ -121,6 +121,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/shift-plans/{id}/build', [\App\Http\Controllers\ShiftPlanController::class, 'build']);
         Route::post('/shift-plans/{id}/publish', [\App\Http\Controllers\ShiftPlanController::class, 'publish']);
         Route::post('/shift-plans/{id}/close', [\App\Http\Controllers\ShiftPlanController::class, 'close']);
+        Route::get('/shift-plans/{id}/schedule', [\App\Http\Controllers\ShiftPlanController::class, 'schedule']);
+        Route::post('/shift-plans/{id}/send-schedule', [\App\Http\Controllers\ShiftPlanController::class, 'sendSchedule']);
 
         // shift request admin actions
         Route::post('/shift-requests/{id}/approve', [\App\Http\Controllers\ShiftRequestController::class, 'approve']);

@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
 import '../network/api_service.dart';
@@ -26,7 +26,7 @@ class AuthService {
         return user;
       }
     } catch (e) {
-      print('Login error: $e');
+      debugPrint('Login error: $e');
     }
     return null;
   }
@@ -38,7 +38,7 @@ class AuthService {
         return UserModel.fromJson(response.data);
       }
     } catch (e) {
-      print('Get user error: $e');
+      debugPrint('Get user error: $e');
     }
     return null;
   }

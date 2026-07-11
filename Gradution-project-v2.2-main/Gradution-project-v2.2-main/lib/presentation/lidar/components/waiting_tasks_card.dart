@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ems_op_room/core/providers/app_providers.dart';
-import 'package:ems_op_room/core/providers/data_providers.dart';
 import 'package:ems_op_room/core/providers/sector_dashboard_provider.dart';
 
 class WaitingTasksCard extends ConsumerWidget {

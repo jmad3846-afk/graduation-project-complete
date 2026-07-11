@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../models/schedule_row_model.dart';
 import '../models/shift_plan_model.dart';
 import '../models/shift_statistics_model.dart';
 import '../models/swap_request_model.dart';
@@ -19,6 +20,7 @@ class ShiftManagementState {
   final bool isLoading;
   final String? error;
   final String? successMessage;
+  final int? justPublishedPlanId;
 
   const ShiftManagementState({
     required this.statistics,
@@ -27,6 +29,7 @@ class ShiftManagementState {
     this.isLoading = false,
     this.error,
     this.successMessage,
+    this.justPublishedPlanId,
   });
 
   ShiftManagementState copyWith({
@@ -36,8 +39,10 @@ class ShiftManagementState {
     bool? isLoading,
     String? error,
     String? successMessage,
+    int? justPublishedPlanId,
     bool clearError = false,
     bool clearSuccess = false,
+    bool clearJustPublished = false,
   }) {
     return ShiftManagementState(
       statistics: statistics ?? this.statistics,
@@ -47,6 +52,9 @@ class ShiftManagementState {
       error: clearError ? null : (error ?? this.error),
       successMessage:
           clearSuccess ? null : (successMessage ?? this.successMessage),
+      justPublishedPlanId: clearJustPublished
+          ? null
+          : (justPublishedPlanId ?? this.justPublishedPlanId),
     );
   }
 
@@ -146,11 +154,30 @@ class ShiftManagementNotifier extends StateNotifier<ShiftManagementState> {
   Future<void> buildPlan(int id) =>
       _runPlanAction(id, () => _service.buildPlan(id), 'تم بناء الجدول');
 
-  Future<void> publishPlan(int id) =>
-      _runPlanAction(id, () => _service.publishPlan(id), 'تم نشر الجدول');
+  Future<void> publishPlan(int id) async {
+    state = state.copyWith(isLoading: true, clearError: true);
+    final ok = await _service.publishPlan(id);
+    if (ok) {
+      await refreshPlans();
+      state = state.copyWith(
+        isLoading: false,
+        successMessage: 'تم نشر الجدول',
+        justPublishedPlanId: id,
+      );
+    } else {
+      state = state.copyWith(isLoading: false, error: 'فشلت العملية');
+    }
+  }
 
   Future<void> closePlan(int id) =>
       _runPlanAction(id, () => _service.closePlan(id), 'تم إغلاق الخطة');
+
+  // ── Schedule distribution ─────────────────────────────────────────────────
+
+  Future<List<ScheduleRowModel>> fetchSchedule(int planId) =>
+      _service.fetchSchedule(planId);
+
+  Future<bool> sendSchedule(int planId) => _service.sendSchedule(planId);
 
   // ── Swap requests ──────────────────────────────────────────────────────────
 
@@ -179,6 +206,10 @@ class ShiftManagementNotifier extends StateNotifier<ShiftManagementState> {
 
   void clearMessages() {
     state = state.copyWith(clearError: true, clearSuccess: true);
+  }
+
+  void clearJustPublished() {
+    state = state.copyWith(clearJustPublished: true);
   }
 }
 

@@ -1,4 +1,4 @@
-
+import 'package:flutter/foundation.dart';
 import '../models/case_model.dart';
 import '../network/api_service.dart';
 
@@ -15,7 +15,7 @@ class CaseService {
         return data.map((json) => CaseModel.fromJson(json)).toList();
       }
     } catch (e) {
-      print('Fetch cases error: $e');
+      debugPrint('Fetch cases error: $e');
     }
     return [];
   }

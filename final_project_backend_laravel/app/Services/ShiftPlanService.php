@@ -6,6 +6,7 @@ use App\Models\Center;
 use App\Models\Shift;
 use App\Models\ShiftAssignment;
 use App\Models\ShiftPlan;
+use App\Models\ShiftPlanCompensation;
 use App\Models\ShiftPoll;
 use App\Models\ShiftPollReservation;
 use App\Models\User;
@@ -26,6 +27,9 @@ class ShiftPlanService
         'published',
         'closed',
     ];
+
+    // Business rule: every assigned shift is worth this many Syrian Pounds.
+    public const COMPENSATION_PER_SHIFT = 500;
 
     public function createMonthlyPlan(int $month, int $year, ?int $createdBy = null): ShiftPlan
     {
@@ -348,6 +352,83 @@ class ShiftPlanService
         }
 
         return $best;
+    }
+
+    /**
+     * Freeze the schedule: publishing must succeed even if the plan still has
+     * unfilled slots — empty slots are an accepted, permanent outcome, not a
+     * blocker. This also computes and stores each user's monthly compensation
+     * (assigned shift count x COMPENSATION_PER_SHIFT) for this plan.
+     */
+    public function publishSchedule(ShiftPlan $plan): ShiftPlan
+    {
+        $this->assertStatusTransition($plan, 'building');
+
+        return DB::transaction(function () use ($plan) {
+            $counts = ShiftAssignment::whereHas('shift', function ($q) use ($plan) {
+                $q->where('shift_plan_id', $plan->id);
+            })->selectRaw('user_id, count(*) as cnt')->groupBy('user_id')->pluck('cnt', 'user_id');
+
+            foreach ($counts as $userId => $count) {
+                ShiftPlanCompensation::updateOrCreate(
+                    ['shift_plan_id' => $plan->id, 'user_id' => $userId],
+                    [
+                        'monthly_shift_count' => $count,
+                        'monthly_compensation' => $count * self::COMPENSATION_PER_SHIFT,
+                    ]
+                );
+            }
+
+            $plan->status = 'published';
+            $plan->published_at = now();
+            $plan->save();
+
+            return $plan->fresh();
+        });
+    }
+
+    /**
+     * Full center/day/shift/role grid for the plan, including empty slots,
+     * for the admin Schedule Distribution page.
+     */
+    public function scheduleGrid(ShiftPlan $plan): array
+    {
+        $shifts = Shift::where('shift_plan_id', $plan->id)
+            ->with(['center', 'assignments.user'])
+            ->orderBy('date')
+            ->orderBy('center_id')
+            ->orderBy('type')
+            ->get();
+
+        $rows = [];
+
+        foreach ($shifts as $shift) {
+            for ($team = 1; $team <= $shift->team_number; $team++) {
+                $byRole = ['leader' => null, 'scout' => null, 'paramedic' => null];
+
+                foreach ($shift->assignments as $assignment) {
+                    if ((int) $assignment->team_number === $team && array_key_exists($assignment->role, $byRole)) {
+                        $byRole[$assignment->role] = [
+                            'user_id' => $assignment->user_id,
+                            'name' => $assignment->user->name ?? null,
+                        ];
+                    }
+                }
+
+                $rows[] = [
+                    'shift_id' => $shift->id,
+                    'center' => $shift->center->name ?? null,
+                    'date' => $shift->date,
+                    'shift_type' => $shift->type,
+                    'team' => $team,
+                    'leader' => $byRole['leader'],
+                    'scout' => $byRole['scout'],
+                    'paramedic' => $byRole['paramedic'],
+                ];
+            }
+        }
+
+        return $rows;
     }
 
     public function closePlan(ShiftPlan $plan): ShiftPlan

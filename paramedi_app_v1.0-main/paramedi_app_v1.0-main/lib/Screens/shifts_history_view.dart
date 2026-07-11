@@ -173,13 +173,22 @@ class _ShiftsHistoryViewState extends ConsumerState<ShiftsHistoryView> {
             ),
             const SizedBox(height: 10),
             scheduleState.when(
-              data: (items) => items.isEmpty
-                  ? const _EmptyPanel(text: 'No upcoming shifts')
-                  : Column(
-                      children: items
-                          .map((item) => _ScheduleCard(assignment: item))
-                          .toList(),
-                    ),
+              data: (items) {
+                final today = DateTime.now();
+                final todayOnly = DateTime(today.year, today.month, today.day);
+                final upcoming = items.where((item) {
+                  final date = DateTime.tryParse(item.date);
+                  return date == null || !date.isBefore(todayOnly);
+                }).toList();
+
+                return upcoming.isEmpty
+                    ? const _EmptyPanel(text: 'No upcoming shifts')
+                    : Column(
+                        children: upcoming
+                            .map((item) => _ScheduleCard(assignment: item))
+                            .toList(),
+                      );
+              },
               loading: () => const _LoadingPanel(),
               error: (e, _) => _EmptyPanel(text: 'Schedule error: $e'),
             ),
@@ -482,7 +491,7 @@ class _DayCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         side: BorderSide(
           color: hasSelection
-              ? const Color(0xFFE52E2E).withOpacity(0.3)
+              ? const Color(0xFFE52E2E).withValues(alpha: 0.3)
               : Colors.grey.shade200,
         ),
       ),
@@ -492,7 +501,7 @@ class _DayCard extends StatelessWidget {
         leading: CircleAvatar(
           radius: 16,
           backgroundColor: hasSelection
-              ? const Color(0xFFE52E2E).withOpacity(0.1)
+              ? const Color(0xFFE52E2E).withValues(alpha: 0.1)
               : Colors.grey.shade100,
           child: Text(
             '$day',
@@ -764,7 +773,7 @@ BoxDecoration _panelDecoration() {
     border: Border.all(color: Colors.grey.shade200),
     boxShadow: [
       BoxShadow(
-        color: Colors.black.withOpacity(0.03),
+        color: Colors.black.withValues(alpha: 0.03),
         blurRadius: 6,
         offset: const Offset(0, 2),
       ),
