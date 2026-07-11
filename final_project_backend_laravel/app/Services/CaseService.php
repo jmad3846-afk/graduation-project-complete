@@ -24,7 +24,12 @@ class CaseService
 
         $case = EmsCase::create([
             'triage_code' => $data['triage_code'] ?? 'green',
+            'transfer_type' => $data['transfer_type'] ?? null,
             'symptoms' => $data['symptoms'] ?? null,
+            'breathing_rate' => $data['breathing_rate'] ?? null,
+            'medical_aid_given' => $data['medical_aid_given'] ?? null,
+            'operations_officer' => $data['operations_officer'] ?? null,
+            'sector_commander' => $data['sector_commander'] ?? null,
             'status' => 'waiting',
             'latitude' => $data['latitude'] ?? null,
             'longitude' => $data['longitude'] ?? null,
@@ -43,6 +48,8 @@ class CaseService
                 'oxygen_level' => $data['oxygen_level'] ?? null,
                 'blood_pressure' => $data['blood_pressure'] ?? null,
                 'blood_sugar' => $data['blood_sugar'] ?? null,
+                'oxygen_before' => $data['oxygen_before'] ?? null,
+                'oxygen_after' => $data['oxygen_after'] ?? null,
                 'has_tube' => $data['has_tube'] ?? false,
                 'conscious' => $data['conscious'] ?? true,
             ]);

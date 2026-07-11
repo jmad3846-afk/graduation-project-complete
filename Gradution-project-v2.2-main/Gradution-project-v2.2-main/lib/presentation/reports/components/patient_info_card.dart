@@ -9,6 +9,8 @@ class PatientInfoCard extends StatelessWidget {
   final TextEditingController ageController;
   final TextEditingController weightController;
   final TextEditingController medicalHistoryController;
+  final TextEditingController oxygenBeforeController;
+  final TextEditingController oxygenAfterController;
   final ValueNotifier<String> emergencyCodeNotifier;
 
   const PatientInfoCard({
@@ -18,6 +20,8 @@ class PatientInfoCard extends StatelessWidget {
     required this.ageController,
     required this.weightController,
     required this.medicalHistoryController,
+    required this.oxygenBeforeController,
+    required this.oxygenAfterController,
     required this.emergencyCodeNotifier,
     super.key,
   });
@@ -58,6 +62,17 @@ class PatientInfoCard extends StatelessWidget {
           secondary,
           controller: medicalHistoryController,
           maxLines: 3,
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: reportTextField("Oxygen Before", primary, secondary, controller: oxygenBeforeController),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: reportTextField("Oxygen After", primary, secondary, controller: oxygenAfterController),
+            ),
+          ],
         ),
       ],
       primary,

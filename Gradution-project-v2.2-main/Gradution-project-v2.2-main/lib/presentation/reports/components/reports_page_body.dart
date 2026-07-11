@@ -29,6 +29,8 @@ class _ReportsBodyState extends ConsumerState<ReportsBody> {
   final _ageController = TextEditingController();
   final _weightController = TextEditingController();
   final _medicalHistoryController = TextEditingController();
+  final _oxygenBeforeController = TextEditingController();
+  final _oxygenAfterController = TextEditingController();
   final _emergencyCodeNotifier = ValueNotifier<String>('Green');
 
   // Medical Controllers
@@ -37,16 +39,18 @@ class _ReportsBodyState extends ConsumerState<ReportsBody> {
   final _bloodSugarController = TextEditingController();
   final _oxygenSupportLevelController = TextEditingController();
   final _oxygenAfterSupportController = TextEditingController();
+  final _symptomsController = TextEditingController();
+  final _breathingRateController = TextEditingController();
   final _intubatedNotifier = ValueNotifier<bool>(false);
   final _consciousNotifier = ValueNotifier<bool>(false);
 
   // Location Controllers
-  final _locationController = TextEditingController();
-  final _supervisingDoctorController = TextEditingController();
-  final _doctorPhoneController = TextEditingController();
-  final _goingToController = TextEditingController();
-  final _receivingDoctorController = TextEditingController();
-  final _hospitalPhoneController = TextEditingController();
+  final _transferTypeNotifier = ValueNotifier<String>(LocationInfoCard.transferTypes.first);
+
+  // Staff Controllers
+  final _operationsOfficerController = TextEditingController();
+  final _sectorCommanderController = TextEditingController();
+  final _medicalAidGivenController = TextEditingController();
 
   @override
   void dispose() {
@@ -60,20 +64,22 @@ class _ReportsBodyState extends ConsumerState<ReportsBody> {
     _ageController.dispose();
     _weightController.dispose();
     _medicalHistoryController.dispose();
+    _oxygenBeforeController.dispose();
+    _oxygenAfterController.dispose();
     _emergencyCodeNotifier.dispose();
     _oxygenLevelController.dispose();
     _bloodPressureController.dispose();
     _bloodSugarController.dispose();
     _oxygenSupportLevelController.dispose();
     _oxygenAfterSupportController.dispose();
+    _symptomsController.dispose();
+    _breathingRateController.dispose();
     _intubatedNotifier.dispose();
     _consciousNotifier.dispose();
-    _locationController.dispose();
-    _supervisingDoctorController.dispose();
-    _doctorPhoneController.dispose();
-    _goingToController.dispose();
-    _receivingDoctorController.dispose();
-    _hospitalPhoneController.dispose();
+    _transferTypeNotifier.dispose();
+    _operationsOfficerController.dispose();
+    _sectorCommanderController.dispose();
+    _medicalAidGivenController.dispose();
     super.dispose();
   }
 
@@ -93,21 +99,24 @@ String? nullIfEmpty(String text) => text.isEmpty ? null : text;
       'age': nullIfEmpty(_ageController.text),
       'weight': nullIfEmpty(_weightController.text),
       'medical_history': nullIfEmpty(_medicalHistoryController.text),
+      'oxygen_before': nullIfEmpty(_oxygenBeforeController.text),
+      'oxygen_after': nullIfEmpty(_oxygenAfterController.text),
       // Optional medical fields
       'oxygen_level': nullIfEmpty(_oxygenLevelController.text),
       'blood_pressure': nullIfEmpty(_bloodPressureController.text),
       'blood_sugar': nullIfEmpty(_bloodSugarController.text),
       'oxygen_support_level': nullIfEmpty(_oxygenSupportLevelController.text),
       'oxygen_level_after': nullIfEmpty(_oxygenAfterSupportController.text),
+      'symptoms': nullIfEmpty(_symptomsController.text),
+      'breathing_rate': nullIfEmpty(_breathingRateController.text),
       'has_tube': _intubatedNotifier.value,
       'conscious': _consciousNotifier.value,
-      // Optional location fields
-      'location': nullIfEmpty(_locationController.text),
-      'supervising_doctor': nullIfEmpty(_supervisingDoctorController.text),
-      'doctor_phone': nullIfEmpty(_doctorPhoneController.text),
-      'going_to': nullIfEmpty(_goingToController.text),
-      'receiving_doctor': nullIfEmpty(_receivingDoctorController.text),
-      'hospital_phone': nullIfEmpty(_hospitalPhoneController.text),
+      // Optional location field
+      'transfer_type': _transferTypeNotifier.value,
+      // Optional staff fields
+      'operations_officer': nullIfEmpty(_operationsOfficerController.text),
+      'sector_commander': nullIfEmpty(_sectorCommanderController.text),
+      'medical_aid_given': nullIfEmpty(_medicalAidGivenController.text),
     };
   }
 
@@ -147,20 +156,22 @@ String? nullIfEmpty(String text) => text.isEmpty ? null : text;
     _ageController.clear();
     _weightController.clear();
     _medicalHistoryController.clear();
+    _oxygenBeforeController.clear();
+    _oxygenAfterController.clear();
     _emergencyCodeNotifier.value = 'Green';
     _oxygenLevelController.clear();
     _bloodPressureController.clear();
     _bloodSugarController.clear();
     _oxygenSupportLevelController.clear();
     _oxygenAfterSupportController.clear();
+    _symptomsController.clear();
+    _breathingRateController.clear();
     _intubatedNotifier.value = false;
     _consciousNotifier.value = false;
-    _locationController.clear();
-    _supervisingDoctorController.clear();
-    _doctorPhoneController.clear();
-    _goingToController.clear();
-    _receivingDoctorController.clear();
-    _hospitalPhoneController.clear();
+    _transferTypeNotifier.value = LocationInfoCard.transferTypes.first;
+    _operationsOfficerController.clear();
+    _sectorCommanderController.clear();
+    _medicalAidGivenController.clear();
   }
 
   @override
@@ -209,6 +220,8 @@ String? nullIfEmpty(String text) => text.isEmpty ? null : text;
                         ageController: _ageController,
                         weightController: _weightController,
                         medicalHistoryController: _medicalHistoryController,
+                        oxygenBeforeController: _oxygenBeforeController,
+                        oxygenAfterController: _oxygenAfterController,
                         emergencyCodeNotifier: _emergencyCodeNotifier,
                       ),
                     ),
@@ -227,6 +240,8 @@ String? nullIfEmpty(String text) => text.isEmpty ? null : text;
                         bloodSugarController: _bloodSugarController,
                         oxygenSupportLevelController: _oxygenSupportLevelController,
                         oxygenAfterSupportController: _oxygenAfterSupportController,
+                        symptomsController: _symptomsController,
+                        breathingRateController: _breathingRateController,
                         intubatedNotifier: _intubatedNotifier,
                         consciousNotifier: _consciousNotifier,
                       ),
@@ -237,18 +252,19 @@ String? nullIfEmpty(String text) => text.isEmpty ? null : text;
                       child: LocationInfoCard(
                         primary: primary,
                         secondary: secondary,
-                        locationController: _locationController,
-                        supervisingDoctorController: _supervisingDoctorController,
-                        doctorPhoneController: _doctorPhoneController,
-                        goingToController: _goingToController,
-                        receivingDoctorController: _receivingDoctorController,
-                        hospitalPhoneController: _hospitalPhoneController,
+                        transferTypeNotifier: _transferTypeNotifier,
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 20),
-                StaffInfoCard(primary, secondary),
+                StaffInfoCard(
+                  primary,
+                  secondary,
+                  operationsOfficerController: _operationsOfficerController,
+                  sectorCommanderController: _sectorCommanderController,
+                  medicalAidGivenController: _medicalAidGivenController,
+                ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(

@@ -12,6 +12,8 @@ class MedicalInfoCard extends StatelessWidget {
   final TextEditingController bloodSugarController;
   final TextEditingController oxygenSupportLevelController;
   final TextEditingController oxygenAfterSupportController;
+  final TextEditingController symptomsController;
+  final TextEditingController breathingRateController;
   // Boolean notifiers
   final ValueNotifier<bool> intubatedNotifier;
   final ValueNotifier<bool> consciousNotifier;
@@ -24,6 +26,8 @@ class MedicalInfoCard extends StatelessWidget {
     required this.bloodSugarController,
     required this.oxygenSupportLevelController,
     required this.oxygenAfterSupportController,
+    required this.symptomsController,
+    required this.breathingRateController,
     required this.intubatedNotifier,
     required this.consciousNotifier,
     super.key,
@@ -48,6 +52,8 @@ class MedicalInfoCard extends StatelessWidget {
         reportTextField("Blood Sugar", primary, secondary, controller: bloodSugarController),
         reportTextField("Oxygen Support Level", primary, secondary, controller: oxygenSupportLevelController),
         reportTextField("Oxygen Level After Support", primary, secondary, controller: oxygenAfterSupportController),
+        reportTextField("Symptoms", primary, secondary, controller: symptomsController, maxLines: 3),
+        reportTextField("Breathing Rate", primary, secondary, controller: breathingRateController),
         ValueListenableBuilder<bool>(
           valueListenable: intubatedNotifier,
           builder: (context, value, _) => SwitchListTile(

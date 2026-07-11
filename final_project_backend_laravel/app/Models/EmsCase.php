@@ -9,7 +9,7 @@ class EmsCase extends Model
     use \App\Traits\LogsAudit;
 
     protected $table = 'cases';
-    protected $fillable = ['center_id', 'vehicle_id', 'triage_code', 'transfer_type', 'status', 'symptoms', 'breathing_rate', 'medical_aid_given', 'latitude', 'longitude', 'destination_hospital', 'device_id', 'tracking_token'];
+    protected $fillable = ['center_id', 'vehicle_id', 'triage_code', 'transfer_type', 'status', 'symptoms', 'breathing_rate', 'medical_aid_given', 'latitude', 'longitude', 'destination_hospital', 'device_id', 'tracking_token', 'operations_officer', 'sector_commander'];
 
     public function center()
     {

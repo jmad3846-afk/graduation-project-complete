@@ -22,7 +22,12 @@ class StoreCaseRequest extends FormRequest
             'report_date' => 'required|string',
             // Optional fields – accepted as nullable so they can be omitted
             'triage_code' => 'nullable|string',
+            'transfer_type' => 'nullable|string',
             'symptoms' => 'nullable|string',
+            'breathing_rate' => 'nullable|integer|min:0',
+            'medical_aid_given' => 'nullable|string',
+            'operations_officer' => 'nullable|string',
+            'sector_commander' => 'nullable|string',
             'patient_name' => 'nullable|string',
             'age' => 'nullable|integer|min:0',
             'weight' => 'nullable|numeric|min:0',
@@ -30,6 +35,8 @@ class StoreCaseRequest extends FormRequest
             'oxygen_level' => 'nullable|numeric|min:0|max:100',
             'blood_pressure' => 'nullable|string',
             'blood_sugar' => 'nullable|numeric|min:0',
+            'oxygen_before' => 'nullable|numeric|min:0|max:100',
+            'oxygen_after' => 'nullable|numeric|min:0|max:100',
             'has_tube' => 'nullable|boolean',
             'conscious' => 'nullable|boolean',
         ];
