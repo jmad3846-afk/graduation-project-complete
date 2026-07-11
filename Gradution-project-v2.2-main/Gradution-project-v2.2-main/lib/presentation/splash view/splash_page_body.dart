@@ -17,11 +17,15 @@ class _SplashViewBodyState extends State<SplashViewBody> {
   void initState() {
     super.initState();
 
+    // يتم استدعاء المؤقت كل 100 مللي ثانية
+    // للوصول إلى 3 ثواني (3000 مللي ثانية)، نحتاج إلى 30 خطوة
+    // لذلك نزيد التقدم بمقدار 0.0333... في كل خطوة (1.0 / 30 ≈ 0.0333)
     _timer = Timer.periodic(
       const Duration(milliseconds: 100),
           (timer) {
         setState(() {
-          progress += 0.033;
+          progress += (1.0 / 30.0);
+
 
           if (progress >= 1.0) {
             progress = 1.0;
