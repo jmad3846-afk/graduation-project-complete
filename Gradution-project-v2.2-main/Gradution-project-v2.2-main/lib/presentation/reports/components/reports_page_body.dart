@@ -29,6 +29,7 @@ class _ReportsBodyState extends ConsumerState<ReportsBody> {
   final _ageController = TextEditingController();
   final _weightController = TextEditingController();
   final _medicalHistoryController = TextEditingController();
+  final _emergencyCodeNotifier = ValueNotifier<String>('Green');
 
   // Medical Controllers
   final _oxygenLevelController = TextEditingController();
@@ -59,6 +60,7 @@ class _ReportsBodyState extends ConsumerState<ReportsBody> {
     _ageController.dispose();
     _weightController.dispose();
     _medicalHistoryController.dispose();
+    _emergencyCodeNotifier.dispose();
     _oxygenLevelController.dispose();
     _bloodPressureController.dispose();
     _bloodSugarController.dispose();
@@ -87,6 +89,7 @@ String? nullIfEmpty(String text) => text.isEmpty ? null : text;
       'report_date': _reportDateController.text,
       // Optional patient fields
       'patient_name': nullIfEmpty(_patientNameController.text),
+      'triage_code': _emergencyCodeNotifier.value.toLowerCase(),
       'age': nullIfEmpty(_ageController.text),
       'weight': nullIfEmpty(_weightController.text),
       'medical_history': nullIfEmpty(_medicalHistoryController.text),
@@ -96,8 +99,8 @@ String? nullIfEmpty(String text) => text.isEmpty ? null : text;
       'blood_sugar': nullIfEmpty(_bloodSugarController.text),
       'oxygen_support_level': nullIfEmpty(_oxygenSupportLevelController.text),
       'oxygen_level_after': nullIfEmpty(_oxygenAfterSupportController.text),
-      'is_intubated': _intubatedNotifier.value,
-      'is_conscious': _consciousNotifier.value,
+      'has_tube': _intubatedNotifier.value,
+      'conscious': _consciousNotifier.value,
       // Optional location fields
       'location': nullIfEmpty(_locationController.text),
       'supervising_doctor': nullIfEmpty(_supervisingDoctorController.text),
@@ -144,6 +147,7 @@ String? nullIfEmpty(String text) => text.isEmpty ? null : text;
     _ageController.clear();
     _weightController.clear();
     _medicalHistoryController.clear();
+    _emergencyCodeNotifier.value = 'Green';
     _oxygenLevelController.clear();
     _bloodPressureController.clear();
     _bloodSugarController.clear();
@@ -205,6 +209,7 @@ String? nullIfEmpty(String text) => text.isEmpty ? null : text;
                         ageController: _ageController,
                         weightController: _weightController,
                         medicalHistoryController: _medicalHistoryController,
+                        emergencyCodeNotifier: _emergencyCodeNotifier,
                       ),
                     ),
                   ],

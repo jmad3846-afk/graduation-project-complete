@@ -48,17 +48,23 @@ class MedicalInfoCard extends StatelessWidget {
         reportTextField("Blood Sugar", primary, secondary, controller: bloodSugarController),
         reportTextField("Oxygen Support Level", primary, secondary, controller: oxygenSupportLevelController),
         reportTextField("Oxygen Level After Support", primary, secondary, controller: oxygenAfterSupportController),
-        SwitchListTile(
-          title: const Text("Is Patient Intubated?"),
-          value: intubatedNotifier.value,
-          activeThumbColor: primary,
-          onChanged: (v) => intubatedNotifier.value = v,
+        ValueListenableBuilder<bool>(
+          valueListenable: intubatedNotifier,
+          builder: (context, value, _) => SwitchListTile(
+            title: const Text("Is Patient Intubated?"),
+            value: value,
+            activeThumbColor: primary,
+            onChanged: (v) => intubatedNotifier.value = v,
+          ),
         ),
-        SwitchListTile(
-          title: const Text("Is Patient Conscious?"),
-          value: consciousNotifier.value,
-          activeThumbColor: primary,
-          onChanged: (v) => consciousNotifier.value = v,
+        ValueListenableBuilder<bool>(
+          valueListenable: consciousNotifier,
+          builder: (context, value, _) => SwitchListTile(
+            title: const Text("Is Patient Conscious?"),
+            value: value,
+            activeThumbColor: primary,
+            onChanged: (v) => consciousNotifier.value = v,
+          ),
         ),
       ],
       primary,
