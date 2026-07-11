@@ -146,10 +146,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/my-schedule/month/{month}/{year}', [\App\Http\Controllers\MyScheduleController::class, 'month']);
 
     // Shift requests
+    Route::get('/shift-requests/candidates', [\App\Http\Controllers\ShiftRequestController::class, 'candidates']);
     Route::post('/shift-requests', [\App\Http\Controllers\ShiftRequestController::class, 'store']);
     Route::get('/shift-requests', [\App\Http\Controllers\ShiftRequestController::class, 'index']);
     Route::get('/shift-requests/pending', [\App\Http\Controllers\ShiftRequestController::class, 'pending']);
-    Route::post('/shift-requests/{id}/accept', [\App\Http\Controllers\ShiftRequestController::class, 'accept']);
     Route::post('/shift-requests/{id}/reject', [\App\Http\Controllers\ShiftRequestController::class, 'reject']);
 
     // DEBUG TESTING

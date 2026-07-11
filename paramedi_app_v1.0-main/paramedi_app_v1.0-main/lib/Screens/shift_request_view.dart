@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../core/models/shift_assignment_model.dart';
 import '../core/models/shift_request_model.dart';
 import '../core/providers/data_providers.dart';
 import '../core/providers/service_providers.dart';
@@ -15,36 +15,61 @@ class ShiftRequestView extends ConsumerStatefulWidget {
 
 class _ShiftRequestViewState extends ConsumerState<ShiftRequestView> {
   final _formKey = GlobalKey<FormState>();
-  final _requesterController = TextEditingController();
-  final _targetController = TextEditingController();
   final _reasonController = TextEditingController();
+
+  ShiftAssignmentModel? _mySelectedAssignment;
+  SwapCandidateModel? _selectedCandidate;
+
+  List<SwapCandidateModel> _candidates = [];
+  bool _loadingCandidates = false;
   bool _submitting = false;
 
   @override
   void dispose() {
-    _requesterController.dispose();
-    _targetController.dispose();
     _reasonController.dispose();
     super.dispose();
   }
 
+  Future<void> _onMyAssignmentChanged(ShiftAssignmentModel? assignment) async {
+    setState(() {
+      _mySelectedAssignment = assignment;
+      _selectedCandidate = null;
+      _candidates = [];
+    });
+
+    if (assignment == null) return;
+
+    setState(() => _loadingCandidates = true);
+    final candidates = await ref.read(shiftServiceProvider).fetchSwapCandidates(assignment.id);
+    if (!mounted) return;
+    setState(() {
+      _candidates = candidates;
+      _loadingCandidates = false;
+    });
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
+    if (_mySelectedAssignment == null || _selectedCandidate == null) return;
 
     setState(() => _submitting = true);
     try {
       await ref.read(shiftServiceProvider).createSwapRequest(
-            requesterAssignmentId: int.parse(_requesterController.text),
-            targetAssignmentId: int.parse(_targetController.text),
+            requesterAssignmentId: _mySelectedAssignment!.id,
+            targetAssignmentId: _selectedCandidate!.id,
             reason: _reasonController.text,
           );
-      _requesterController.clear();
-      _targetController.clear();
+      setState(() {
+        _mySelectedAssignment = null;
+        _selectedCandidate = null;
+        _candidates = [];
+      });
       _reasonController.clear();
       ref.invalidate(shiftRequestListProvider);
+      ref.invalidate(myScheduleProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Shift request submitted')),
+          const SnackBar(content: Text('Shift swap request submitted')),
         );
       }
     } catch (e) {
@@ -61,6 +86,7 @@ class _ShiftRequestViewState extends ConsumerState<ShiftRequestView> {
   @override
   Widget build(BuildContext context) {
     final requestState = ref.watch(shiftRequestListProvider);
+    final myScheduleState = ref.watch(myScheduleProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -70,7 +96,10 @@ class _ShiftRequestViewState extends ConsumerState<ShiftRequestView> {
         elevation: 0,
       ),
       body: RefreshIndicator(
-        onRefresh: () async => ref.invalidate(shiftRequestListProvider),
+        onRefresh: () async {
+          ref.invalidate(shiftRequestListProvider);
+          ref.invalidate(myScheduleProvider);
+        },
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
@@ -84,15 +113,27 @@ class _ShiftRequestViewState extends ConsumerState<ShiftRequestView> {
                   children: [
                     const Text('Create Swap Request', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 12),
-                    _NumberField(
-                      controller: _requesterController,
-                      label: 'My assignment ID',
+                    myScheduleState.when(
+                      data: (assignments) => _MyShiftsDropdown(
+                        assignments: assignments,
+                        selected: _mySelectedAssignment,
+                        onChanged: _onMyAssignmentChanged,
+                      ),
+                      loading: () => const LinearProgressIndicator(),
+                      error: (e, _) => Text('Failed to load your shifts: $e'),
                     ),
                     const SizedBox(height: 10),
-                    _NumberField(
-                      controller: _targetController,
-                      label: 'Target assignment ID',
-                    ),
+                    if (_mySelectedAssignment != null)
+                      _loadingCandidates
+                          ? const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8),
+                              child: LinearProgressIndicator(),
+                            )
+                          : _SwapWithDropdown(
+                              candidates: _candidates,
+                              selected: _selectedCandidate,
+                              onChanged: (c) => setState(() => _selectedCandidate = c),
+                            ),
                     const SizedBox(height: 10),
                     TextFormField(
                       controller: _reasonController,
@@ -106,9 +147,11 @@ class _ShiftRequestViewState extends ConsumerState<ShiftRequestView> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: _submitting ? null : _submit,
+                        onPressed: (_submitting || _mySelectedAssignment == null || _selectedCandidate == null)
+                            ? null
+                            : _submit,
                         style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFE52E2E), foregroundColor: Colors.white),
-                        child: Text(_submitting ? 'Submitting...' : 'Submit Request'),
+                        child: Text(_submitting ? 'Submitting...' : 'Send Request'),
                       ),
                     ),
                   ],
@@ -132,23 +175,69 @@ class _ShiftRequestViewState extends ConsumerState<ShiftRequestView> {
   }
 }
 
-class _NumberField extends StatelessWidget {
-  final TextEditingController controller;
-  final String label;
+class _MyShiftsDropdown extends StatelessWidget {
+  final List<ShiftAssignmentModel> assignments;
+  final ShiftAssignmentModel? selected;
+  final ValueChanged<ShiftAssignmentModel?> onChanged;
 
-  const _NumberField({required this.controller, required this.label});
+  const _MyShiftsDropdown({
+    required this.assignments,
+    required this.selected,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: TextInputType.number,
-      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-      validator: (value) => value == null || value.isEmpty ? 'Required' : null,
-      decoration: InputDecoration(
-        labelText: label,
-        border: const OutlineInputBorder(),
+    return DropdownButtonFormField<ShiftAssignmentModel>(
+      initialValue: selected,
+      isExpanded: true,
+      decoration: const InputDecoration(
+        labelText: 'My Shifts',
+        border: OutlineInputBorder(),
       ),
+      items: assignments
+          .map((a) => DropdownMenuItem(
+                value: a,
+                child: Text('${a.date} • ${a.center} • ${a.shiftType} • ${a.role}', overflow: TextOverflow.ellipsis),
+              ))
+          .toList(),
+      validator: (value) => value == null ? 'Select one of your shifts' : null,
+      onChanged: onChanged,
+    );
+  }
+}
+
+class _SwapWithDropdown extends StatelessWidget {
+  final List<SwapCandidateModel> candidates;
+  final SwapCandidateModel? selected;
+  final ValueChanged<SwapCandidateModel?> onChanged;
+
+  const _SwapWithDropdown({
+    required this.candidates,
+    required this.selected,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (candidates.isEmpty) {
+      return const Text('No matching users found to swap with', style: TextStyle(color: Colors.grey));
+    }
+    return DropdownButtonFormField<SwapCandidateModel>(
+      initialValue: selected,
+      isExpanded: true,
+      decoration: const InputDecoration(
+        labelText: 'Swap With',
+        border: OutlineInputBorder(),
+      ),
+      items: candidates
+          .map((c) => DropdownMenuItem(
+                value: c,
+                child: Text('${c.userName} • ${c.date} • ${c.center} • ${c.shiftType}', overflow: TextOverflow.ellipsis),
+              ))
+          .toList(),
+      validator: (value) => value == null ? 'Select a user to swap with' : null,
+      onChanged: onChanged,
     );
   }
 }
@@ -180,7 +269,6 @@ class _RequestCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text('Role: ${request.role}'),
-          Text('Assignments: ${request.requesterAssignmentId ?? '-'} / ${request.targetAssignmentId ?? '-'}'),
           if (request.reason != null && request.reason!.isNotEmpty) ...[
             const SizedBox(height: 6),
             Text(request.reason!, style: TextStyle(color: Colors.grey.shade700)),

@@ -94,4 +94,21 @@ class ShiftService {
       if (reason != null && reason.trim().isNotEmpty) 'reason': reason.trim(),
     });
   }
+
+  Future<List<SwapCandidateModel>> fetchSwapCandidates(int myAssignmentId) async {
+    try {
+      final response = await _apiService.client.get(
+        '/shift-requests/candidates',
+        queryParameters: {'my_assignment_id': myAssignmentId},
+      );
+      if (response.statusCode == 200) {
+        return _extractList(response.data)
+            .map((json) => SwapCandidateModel.fromJson(Map<String, dynamic>.from(json)))
+            .toList();
+      }
+    } catch (e) {
+      debugPrint('Fetch swap candidates error: $e');
+    }
+    return const [];
+  }
 }

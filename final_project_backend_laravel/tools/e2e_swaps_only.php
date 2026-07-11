@@ -8,14 +8,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request as HttpRequest;
 use App\Models\User;
 
-function http_post_local($path, $token = null, $data = null) {
+function http_call_local($method, $path, $token = null, $data = null) {
     try {
         $server = [];
         if ($token) $server['HTTP_AUTHORIZATION'] = 'Bearer '.$token;
         $server['HTTP_ACCEPT'] = 'application/json';
         $server['CONTENT_TYPE'] = 'application/json';
         $body = $data !== null ? json_encode($data) : null;
-        $request = HttpRequest::create($path, 'POST', [], [], [], $server, $body);
+        $request = HttpRequest::create($path, $method, [], [], [], $server, $body);
         \Illuminate\Support\Facades\Auth::forgetGuards();
         $kernel = app()->make(Illuminate\Contracts\Http\Kernel::class);
         $response = $kernel->handle($request);
@@ -26,6 +26,10 @@ function http_post_local($path, $token = null, $data = null) {
     } catch (\Throwable $e) {
         return ['http_code' => 500, 'body' => null, 'error' => $e->getMessage()];
     }
+}
+
+function http_post_local($path, $token = null, $data = null) {
+    return http_call_local('POST', $path, $token, $data);
 }
 
 $base = '/api';
@@ -44,19 +48,42 @@ $planId = $plan[0]->id;
 echo "Using Shift Plan ID: $planId\n\n";
 
 $assignments = DB::select("
-    SELECT sa.id, sa.user_id, sa.role, s.date 
-    FROM shift_assignments sa 
-    JOIN shifts s ON sa.shift_id = s.id 
+    SELECT sa.id, sa.user_id, sa.role, sa.shift_id, s.date
+    FROM shift_assignments sa
+    JOIN shifts s ON sa.shift_id = s.id
     WHERE s.shift_plan_id = ?
 ", [$planId]);
 
-$byRole = ['paramedic' => [], 'dispatcher' => [], 'sector_leader' => []]; // scout in db might be dispatcher, let's group by DB role
+$byRole = ['paramedic' => [], 'scout' => [], 'leader' => []];
 
 foreach ($assignments as $a) {
-    $byRole[$a->role][] = $a;
+    if (isset($byRole[$a->role])) $byRole[$a->role][] = $a;
+}
+
+function wouldCollideLocal($a, $b, $allForRole) {
+    if ($a->shift_id === $b->shift_id) return true;
+    foreach ($allForRole as $x) {
+        if ($x->id === $a->id || $x->id === $b->id) continue;
+        if (($x->shift_id === $a->shift_id && $x->user_id === $b->user_id)
+            || ($x->shift_id === $b->shift_id && $x->user_id === $a->user_id)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 function getTwoDifferentUsers($list) {
+    // Prefer a pair that a real swap could satisfy (different shifts, and
+    // neither user already independently holds the other's shift). Fall back
+    // to a same-shift pair only if no valid pair exists for this role, so the
+    // "cannot swap" guard itself can still be exercised.
+    foreach ($list as $first) {
+        foreach ($list as $candidate) {
+            if ($candidate->user_id !== $first->user_id && !wouldCollideLocal($first, $candidate, $list)) {
+                return [$first, $candidate];
+            }
+        }
+    }
     $first = null;
     $second = null;
     foreach ($list as $a) {
@@ -70,10 +97,19 @@ function getTwoDifferentUsers($list) {
     return [$first, $second];
 }
 
+function getThirdUserSameRole($list, $excludeUserIds) {
+    foreach ($list as $a) {
+        if (!in_array($a->user_id, $excludeUserIds)) {
+            return $a;
+        }
+    }
+    return null;
+}
+
 $pairs = [
-    'Paramedic Swap' => getTwoDifferentUsers($byRole['paramedic'] ?? []),
-    'Scout Swap' => getTwoDifferentUsers($byRole['scout'] ?? $byRole['dispatcher'] ?? []),
-    'Leader Swap' => getTwoDifferentUsers($byRole['leader'] ?? $byRole['sector_leader'] ?? []),
+    'Paramedic Swap' => getTwoDifferentUsers($byRole['paramedic']),
+    'Scout Swap' => getTwoDifferentUsers($byRole['scout']),
+    'Leader Swap' => getTwoDifferentUsers($byRole['leader']),
 ];
 
 // Cross role validation pair
@@ -105,7 +141,7 @@ foreach ($pairs as $testName => $pair) {
     }
     $reqA = $pair[0];
     $tgtA = $pair[1];
-    
+
     echo "--- Testing $testName ---\n";
     echo "Requester Assignment ID: {$reqA->id} (User: {$reqA->user_id})\n";
     echo "Target Assignment ID: {$tgtA->id} (User: {$tgtA->user_id})\n";
@@ -117,7 +153,37 @@ foreach ($pairs as $testName => $pair) {
     echo "DB State Before:\n" . json_encode($before, JSON_PRETTY_PRINT) . "\n";
 
     $reqToken = $tokens[$reqA->user_id];
-    $tgtToken = $tokens[$tgtA->user_id];
+
+    // Candidates dropdown check: same-role candidates must exclude self and any
+    // assignment that would collide (same shift, or would create a duplicate
+    // (shift_id,user_id) elsewhere) if swapped with.
+    $candResp = http_call_local('GET', $base.'/shift-requests/candidates?my_assignment_id='.$reqA->id, $reqToken);
+    $candBody = json_decode($candResp['body'], true);
+    $candIds = array_column($candBody['data'] ?? $candBody, 'id');
+    $candUserIds = array_column($candBody['data'] ?? $candBody, 'user_id');
+    $wouldCollide = wouldCollideLocal($reqA, $tgtA, $byRole[$reqA->role]);
+    $targetPresenceOk = $wouldCollide ? !in_array($tgtA->id, $candIds) : in_array($tgtA->id, $candIds);
+    if ($candResp['http_code'] !== 200 || in_array($reqA->user_id, $candUserIds) || !$targetPresenceOk) {
+        $results["$testName - Candidates"] = ['Result' => 'FAIL', 'reason' => 'Candidates endpoint did not return expected set. HTTP '.$candResp['http_code']];
+    } else {
+        $results["$testName - Candidates"] = ['Result' => 'PASS'];
+    }
+
+    if ($wouldCollide) {
+        // A colliding pair is unrepresentable under "swap only user_id" (it would
+        // violate the shift_assignments unique(shift_id,user_id) constraint), so
+        // store() rejects it by design. Verify the rejection and move on instead
+        // of asserting a swap that cannot happen for this pair.
+        $rejResp = http_post_local($base.'/shift-requests', $reqToken, [
+            'requester_assignment_id' => $reqA->id,
+            'target_assignment_id' => $tgtA->id,
+            'reason' => 'E2E ' . $testName . ' (colliding pair, expect reject)'
+        ]);
+        $results[$testName] = $rejResp['http_code'] === 422
+            ? ['Result' => 'SKIP (colliding pair correctly rejected)']
+            : ['Result' => 'FAIL', 'reason' => 'Colliding swap was not rejected. HTTP '.$rejResp['http_code']];
+        continue;
+    }
 
     // Create
     $createResp = http_post_local($base.'/shift-requests', $reqToken, [
@@ -129,7 +195,7 @@ foreach ($pairs as $testName => $pair) {
 
     if ($createResp['http_code'] !== 201) {
         $err = 'Create failed. HTTP ' . $createResp['http_code'];
-        if (preg_match('/"message": "(.*?)"/', $createResp['body'], $m)) {
+        if (preg_match('/"message":"(.*?)"/', $createResp['body'], $m)) {
             $err .= ' - Exception: ' . $m[1];
         }
         $results[$testName] = ['Result' => 'FAIL', 'reason' => $err, 'body' => substr($createResp['body'], 0, 500)];
@@ -138,30 +204,45 @@ foreach ($pairs as $testName => $pair) {
 
     $createdData = json_decode($createResp['body'], true);
     $reqId = $createdData['data']['id'] ?? $createdData['id'] ?? null;
-    
+
     $reqDb1 = DB::select('SELECT status FROM shift_requests WHERE id=?', [$reqId])[0];
     if ($reqDb1->status !== 'pending') {
         $results[$testName] = ['Result' => 'FAIL', 'reason' => 'Status is not pending after create.'];
         continue;
     }
 
-    // Accept
-    $acceptResp = http_post_local($base.'/shift-requests/'.$reqId.'/accept', $tgtToken, null);
-    echo "ACCEPT RESPONSE: " . $acceptResp['http_code'] . "\n" . $acceptResp['body'] . "\n\n";
-
-    if ($acceptResp['http_code'] !== 200) {
-        $results[$testName] = ['Result' => 'FAIL', 'reason' => 'Accept failed. HTTP ' . $acceptResp['http_code']];
-        continue;
+    // Duplicate request should be rejected
+    $dupResp = http_post_local($base.'/shift-requests', $reqToken, [
+        'requester_assignment_id' => $reqA->id,
+        'target_assignment_id' => $tgtA->id,
+        'reason' => 'Duplicate attempt'
+    ]);
+    if ($dupResp['http_code'] === 422) {
+        $results["$testName - Duplicate Rejected"] = ['Result' => 'PASS'];
+    } else {
+        $results["$testName - Duplicate Rejected"] = ['Result' => 'FAIL', 'reason' => 'Duplicate request was not rejected. HTTP '.$dupResp['http_code']];
     }
 
-    $reqDb2 = DB::select('SELECT status FROM shift_requests WHERE id=?', [$reqId])[0];
-    if ($reqDb2->status !== 'accepted_by_target') {
-        $results[$testName] = ['Result' => 'FAIL', 'reason' => 'Status is not accepted_by_target after accept.'];
-        continue;
+    // Self-swap should be rejected (use a different assignment owned by requester, if any)
+    $selfTarget = null;
+    foreach ($byRole[$reqA->role] as $a) {
+        if ($a->user_id === $reqA->user_id && $a->id !== $reqA->id) { $selfTarget = $a; break; }
+    }
+    if ($selfTarget) {
+        $selfResp = http_post_local($base.'/shift-requests', $reqToken, [
+            'requester_assignment_id' => $reqA->id,
+            'target_assignment_id' => $selfTarget->id,
+            'reason' => 'Self swap attempt'
+        ]);
+        $results["$testName - Self Swap Rejected"] = $selfResp['http_code'] === 422
+            ? ['Result' => 'PASS']
+            : ['Result' => 'FAIL', 'reason' => 'Self swap was not rejected. HTTP '.$selfResp['http_code']];
+    } else {
+        $results["$testName - Self Swap Rejected"] = ['Result' => 'SKIP', 'reason' => 'No second same-role assignment owned by requester to test with.'];
     }
 
-    // Approve
-    $approveResp = http_post_local($base.'/admin/shift-requests/'.$reqId.'/approve', $adminToken, ['vehicle_id' => null]);
+    // Approve (admin/manager only, no target-accept step anymore)
+    $approveResp = http_post_local($base.'/admin/shift-requests/'.$reqId.'/approve', $adminToken, null);
     echo "APPROVE RESPONSE: " . $approveResp['http_code'] . "\n" . $approveResp['body'] . "\n\n";
 
     if ($approveResp['http_code'] !== 200) {
@@ -187,6 +268,19 @@ foreach ($pairs as $testName => $pair) {
     } else {
         $results[$testName] = ['Result' => 'FAIL', 'reason' => 'user_id was not swapped in shift_assignments.'];
     }
+
+    // Double-approve must be rejected and must NOT swap back
+    $reApproveResp = http_post_local($base.'/admin/shift-requests/'.$reqId.'/approve', $adminToken, null);
+    $afterSecond = [
+        dump_assignment($reqA->id),
+        dump_assignment($tgtA->id)
+    ];
+    $noSwapBack = $afterSecond[0]['user_id'] === $after[0]['user_id'] && $afterSecond[1]['user_id'] === $after[1]['user_id'];
+    if ($reApproveResp['http_code'] === 422 && $noSwapBack) {
+        $results["$testName - Idempotent Approve"] = ['Result' => 'PASS'];
+    } else {
+        $results["$testName - Idempotent Approve"] = ['Result' => 'FAIL', 'reason' => 'Second approve did not return 422 and/or swapped back. HTTP '.$reApproveResp['http_code']];
+    }
 }
 
 // Cross Role Validation
@@ -203,7 +297,7 @@ if ($crossRole1 && $crossRole2) {
         $results['Cross Role Validation'] = ['Result' => 'PASS'];
     } else {
         $err = 'Allowed cross role swap. HTTP ' . $createResp['http_code'];
-        if (preg_match('/"message": "(.*?)"/', $createResp['body'], $m)) {
+        if (preg_match('/"message":"(.*?)"/', $createResp['body'], $m)) {
             $err .= ' - Exception: ' . $m[1];
         }
         $results['Cross Role Validation'] = ['Result' => 'FAIL', 'reason' => $err];
@@ -214,12 +308,11 @@ if ($crossRole1 && $crossRole2) {
 
 // DB Integrity
 $integrity = 'PASS';
-// check for dupes (same user, same date/shift)
 $dupes = DB::select('
-    SELECT sa.user_id, s.date, count(*) as cnt 
-    FROM shift_assignments sa 
-    JOIN shifts s ON sa.shift_id = s.id 
-    GROUP BY sa.user_id, s.date 
+    SELECT sa.user_id, s.date, count(*) as cnt
+    FROM shift_assignments sa
+    JOIN shifts s ON sa.shift_id = s.id
+    GROUP BY sa.user_id, s.date
     HAVING cnt > 1
 ');
 
@@ -232,8 +325,8 @@ $results['Database Integrity'] = ['Result' => $integrity];
 echo "\n====================\n";
 echo "| Test | Result |\n";
 echo "| --- | --- |\n";
-foreach (['Leader Swap', 'Scout Swap', 'Paramedic Swap', 'Cross Role Validation', 'Database Integrity'] as $t) {
-    $r = $results[$t]['Result'] ?? 'UNKNOWN';
+foreach ($results as $t => $v) {
+    $r = $v['Result'] ?? 'UNKNOWN';
     echo "| $t | $r |\n";
 }
 echo "====================\n\n";
