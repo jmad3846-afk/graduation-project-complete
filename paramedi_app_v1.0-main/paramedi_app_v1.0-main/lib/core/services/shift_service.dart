@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import '../models/my_schedule_model.dart';
 import '../models/shift_assignment_model.dart';
@@ -88,11 +89,25 @@ class ShiftService {
     required int targetAssignmentId,
     String? reason,
   }) async {
-    await _apiService.client.post('/shift-requests', data: {
-      'requester_assignment_id': requesterAssignmentId,
-      'target_assignment_id': targetAssignmentId,
-      if (reason != null && reason.trim().isNotEmpty) 'reason': reason.trim(),
-    });
+    try {
+      await _apiService.client.post('/shift-requests', data: {
+        'requester_assignment_id': requesterAssignmentId,
+        'target_assignment_id': targetAssignmentId,
+        if (reason != null && reason.trim().isNotEmpty) 'reason': reason.trim(),
+      });
+    } on DioException catch (e) {
+      throw Exception(_extractErrorMessage(e) ?? 'Failed to submit swap request');
+    }
+  }
+
+  String? _extractErrorMessage(DioException e) {
+    final data = e.response?.data;
+    if (data is Map && data['message'] is String) return data['message'] as String;
+    if (data is Map && data['errors'] is Map) {
+      final errors = (data['errors'] as Map).values.expand((v) => v is List ? v : [v]);
+      if (errors.isNotEmpty) return errors.first.toString();
+    }
+    return null;
   }
 
   Future<List<SwapCandidateModel>> fetchSwapCandidates(int myAssignmentId) async {
