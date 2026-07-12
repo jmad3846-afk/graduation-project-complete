@@ -58,13 +58,6 @@ class DashboardSidebar extends ConsumerWidget {
         'notificationCount': null,
       },
       {
-        'name': 'طلبات التبديل',
-        'subtitle': 'طلبات بانتظار المعالجة',
-        'icon': Icons.swap_horiz_rounded,
-        'route': AppRouteKeys.exchange,
-        'notificationCount': 3,
-      },
-      {
         'name': 'الأرشيف',
         'subtitle': 'الحالات المؤرشفة وسجلاتها',
         'icon': Icons.archive_rounded,
