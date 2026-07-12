@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/models/upcoming_shift_model.dart';
 import '../../../core/providers/center_shift_provider.dart';
+import '../../../core/providers/center_selection_provider.dart';
+import '../../../core/providers/auth_provider.dart';
 
 class UpcomingShiftCard extends ConsumerStatefulWidget {
   const UpcomingShiftCard({super.key});
@@ -11,10 +13,28 @@ class UpcomingShiftCard extends ConsumerStatefulWidget {
 }
 
 class _UpcomingShiftCardState extends ConsumerState<UpcomingShiftCard> {
+  bool get _isAdmin => ref.read(authNotifierProvider).user?.role == 'admin';
+
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => ref.read(centerShiftProvider.notifier).loadUpcomingShift());
+    Future.microtask(_loadForCurrentSelection);
+    ref.listenManual<int?>(selectedCenterIdProvider, (previous, next) {
+      if (previous != next) _loadForCurrentSelection();
+    });
+  }
+
+  void _loadForCurrentSelection() {
+    if (_isAdmin) {
+      final centerId = ref.read(selectedCenterIdProvider);
+      if (centerId == null) {
+        ref.read(centerShiftProvider.notifier).clearForNoCenter();
+        return;
+      }
+      ref.read(centerShiftProvider.notifier).loadUpcomingShift(centerId: centerId);
+    } else {
+      ref.read(centerShiftProvider.notifier).loadUpcomingShift();
+    }
   }
 
   static const _roleLabels = {
@@ -97,6 +117,8 @@ class _UpcomingShiftCardState extends ConsumerState<UpcomingShiftCard> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(centerShiftProvider);
+    final isAdmin = ref.watch(authNotifierProvider).user?.role == 'admin';
+    final noCenterSelected = isAdmin && ref.watch(selectedCenterIdProvider) == null;
 
     return Card(
       elevation: 3,
@@ -113,7 +135,12 @@ class _UpcomingShiftCardState extends ConsumerState<UpcomingShiftCard> {
               ),
             ),
             const Divider(),
-            if (state.isLoading)
+            if (noCenterSelected)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 12),
+                child: Text('اختر مركزاً لعرض المناوبات', style: TextStyle(color: Colors.grey)),
+              )
+            else if (state.isLoading)
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 12),
                 child: Center(child: CircularProgressIndicator()),

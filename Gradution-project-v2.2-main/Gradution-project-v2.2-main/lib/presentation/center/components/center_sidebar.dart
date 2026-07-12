@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'center_picker.dart';
 import 'upcoming_shift_card.dart';
 import 'center_stats_card.dart';
 import 'center_mission_filters.dart';
@@ -11,6 +12,8 @@ class CenterSidebar extends StatelessWidget {
     return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        CenterPicker(),
+        SizedBox(height: 20),
         UpcomingShiftCard(),
         SizedBox(height: 20),
         CenterStatsCard(),

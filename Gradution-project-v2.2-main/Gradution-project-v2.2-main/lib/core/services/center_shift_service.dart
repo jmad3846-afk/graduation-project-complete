@@ -8,11 +8,15 @@ class CenterShiftService {
 
   CenterShiftService(this._apiService);
 
-  Future<UpcomingShiftModel?> fetchUpcomingShift({int? afterShiftId}) async {
+  Future<UpcomingShiftModel?> fetchUpcomingShift({int? afterShiftId, int? centerId}) async {
     try {
+      final queryParameters = <String, dynamic>{
+        if (afterShiftId != null) 'after_shift_id': afterShiftId,
+        if (centerId != null) 'center_id': centerId,
+      };
       final response = await _apiService.client.get(
         '/center/upcoming-shift',
-        queryParameters: afterShiftId != null ? {'after_shift_id': afterShiftId} : null,
+        queryParameters: queryParameters.isEmpty ? null : queryParameters,
       );
       if (response.statusCode == 200) {
         final data = response.data['shift'];

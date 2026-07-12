@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
 import 'service_providers.dart';
+import 'center_selection_provider.dart';
+import 'center_shift_provider.dart';
 import '../constants/app_constants.dart';
 
 class AuthState {
@@ -53,6 +55,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(AppConstants.tokenKey);
     state = AuthState();
+    ref.invalidate(selectedCenterIdProvider);
+    ref.invalidate(centerShiftProvider);
   }
 }
 

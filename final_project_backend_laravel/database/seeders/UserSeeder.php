@@ -73,7 +73,7 @@ class UserSeeder extends Seeder
             'center_id' => null,
         ]);
 
-        // Citizen
+        // Citizen ////////////////////////////////////////////////////////////////////
         User::create([
             'name' => 'Citizen User',
             'phone' => '0501234573',
