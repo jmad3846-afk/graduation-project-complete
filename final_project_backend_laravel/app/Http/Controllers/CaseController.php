@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCaseRequest;
+use App\Http\Resources\CaseResource;
 use App\Services\CaseService;
 use Illuminate\Http\Request;
 
@@ -17,7 +18,7 @@ class CaseController extends Controller
 
     public function index()
     {
-        return response()->json($this->caseService->getAllCases());
+        return response()->json(CaseResource::collection($this->caseService->getAllCases()));
     }
 
     public function store(StoreCaseRequest $request)
@@ -44,5 +45,11 @@ class CaseController extends Controller
         $request->validate(['status' => 'required|in:waiting,assigned,in_progress,at_hospital,closed']);
         $case = $this->caseService->changeStatus($id, $request->status);
         return response()->json(['message' => 'Status changed', 'case' => $case]);
+    }
+
+    public function finish($id)
+    {
+        $case = $this->caseService->finishCase($id);
+        return response()->json(['message' => 'Case finished', 'case' => $case]);
     }
 }

@@ -143,6 +143,39 @@ class CaseService
         return $case;
     }
 
+    /**
+     * Moves a case to 'closed' from whatever state it's in, walking through
+     * the intermediate states the transition table requires (a case fresh
+     * off assignCenter() is 'assigned', which cannot jump straight to
+     * 'closed'). Used by the Radio interface's "Finish Case" action.
+     */
+    public function finishCase(int $id): EmsCase
+    {
+        $case = EmsCase::findOrFail($id);
+
+        $path = [
+            'waiting' => ['assigned', 'in_progress', 'closed'],
+            'assigned' => ['in_progress', 'closed'],
+            'in_progress' => ['closed'],
+            'at_hospital' => ['closed'],
+            'closed' => [],
+        ];
+
+        $steps = $path[$case->status] ?? null;
+
+        if ($steps === null) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'status' => "Cannot finish a case in status '{$case->status}'."
+            ]);
+        }
+
+        foreach ($steps as $nextStatus) {
+            $case = $this->changeStatus($case->id, $nextStatus);
+        }
+
+        return $case;
+    }
+
     public function changeStatus(int $id, string $status): EmsCase
     {
         $case = EmsCase::findOrFail($id);

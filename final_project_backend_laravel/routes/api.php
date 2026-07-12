@@ -35,9 +35,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/cases/{id}', [CaseController::class, 'update']);
     Route::patch('/cases/{id}/center', [CaseController::class, 'assignCenter']);
     Route::patch('/cases/{id}/status', [CaseController::class, 'changeStatus']);
-    
+    Route::post('/cases/{id}/finish', [CaseController::class, 'finish']);
+
     // ARCHIVE & MOVEMENT LOGS
     Route::post('/movement_logs', [\App\Http\Controllers\MovementLogController::class, 'log']);
+    Route::post('/movement_logs/save', [\App\Http\Controllers\MovementLogController::class, 'save']);
     Route::post('/archives', [\App\Http\Controllers\ArchiveController::class, 'store']);
 
     // CENTERS API

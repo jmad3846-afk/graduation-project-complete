@@ -9,11 +9,15 @@ import 'time_input_column.dart';
 class MissionRow extends StatelessWidget {
   final Map<String, dynamic> mission;
   final Function(String missionId, String key, String value) onUpdate;
+  final VoidCallback? onFinish;
+  final bool isFinishing;
 
   const MissionRow({
     super.key,
     required this.mission,
     required this.onUpdate,
+    this.onFinish,
+    this.isFinishing = false,
   });
 
   Color _getStatusColor(String status) {
@@ -59,7 +63,7 @@ class MissionRow extends StatelessWidget {
           SizedBox(
             width: 80,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: isFinishing ? null : onFinish,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red.shade700,
                 padding: EdgeInsets.zero,
@@ -67,10 +71,16 @@ class MissionRow extends StatelessWidget {
                   borderRadius: BorderRadius.circular(6),
                 ),
               ),
-              child: const Text(
-                'إنهاء',
-                style: TextStyle(color: Colors.white),
-              ),
+              child: isFinishing
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    )
+                  : const Text(
+                      'إنهاء',
+                      style: TextStyle(color: Colors.white),
+                    ),
             ),
           ),
         ],
