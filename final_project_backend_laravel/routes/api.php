@@ -49,6 +49,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/sector-commander/dashboard', [\App\Http\Controllers\SectorCommanderController::class, 'dashboardResponse']);
     Route::get('/sector-commander/centers/{centerId}/team-status', [\App\Http\Controllers\SectorCommanderController::class, 'teamStatus']);
 
+    // Overview Dashboard (Admin/Manager)
+    Route::middleware('role:admin,manager')->group(function () {
+        Route::get('/overview/dashboard', [\App\Http\Controllers\OverviewController::class, 'dashboard']);
+        Route::get('/overview/statistics', [\App\Http\Controllers\OverviewController::class, 'statistics']);
+    });
+
     // Center Dashboard: upcoming shift + check-in
     Route::get('/center/upcoming-shift', [\App\Http\Controllers\CenterShiftController::class, 'upcoming']);
     Route::post('/shift-assignments/{assignmentId}/check-in', [\App\Http\Controllers\CenterShiftController::class, 'checkIn']);
