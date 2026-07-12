@@ -7,8 +7,10 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 });
 
 Broadcast::channel('cases.new', function ($user) {
-    // Only dispatchers/admins can listen to new incoming cases.
-    return in_array($user->role, ['admin', 'dispatcher']);
+    // Dispatchers/admins triage incoming cases; sector_leader (the lidar
+    // operations-room "Leader" dashboard) needs new cases to appear in its
+    // Pending Tasks list in real time too.
+    return in_array($user->role, ['admin', 'dispatcher', 'sector_leader']);
 });
 
 Broadcast::channel('vehicles.{id}', function ($user, $id) {

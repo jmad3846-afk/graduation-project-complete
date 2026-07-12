@@ -1,12 +1,40 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ems_op_room/core/providers/service_providers.dart';
+import 'package:ems_op_room/core/providers/sector_dashboard_provider.dart';
 
 import 'components/active_tasks_card.dart';
 import 'components/waiting_tasks_card.dart';
 import 'components/team_status_card.dart';
 import 'components/centers_status_card.dart';
 
-class Lidar extends StatelessWidget {
+class Lidar extends ConsumerStatefulWidget {
   const Lidar({super.key});
+
+  @override
+  ConsumerState<Lidar> createState() => _LidarState();
+}
+
+class _LidarState extends ConsumerState<Lidar> {
+  StreamSubscription? _caseCreatedSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    // A new report submitted anywhere (POST /cases) is broadcast on the
+    // private cases.new channel; refetch the dashboard so it shows up in
+    // Pending Tasks without the leader having to manually refresh.
+    _caseCreatedSubscription = ref.read(wsProvider).onCaseCreated.listen((_) {
+      ref.invalidate(sectorDashboardProvider);
+    });
+  }
+
+  @override
+  void dispose() {
+    _caseCreatedSubscription?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

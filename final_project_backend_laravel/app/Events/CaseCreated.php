@@ -5,11 +5,13 @@ namespace App\Events;
 use App\Models\EmsCase;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class CaseCreated implements ShouldBroadcast
+// Broadcasts immediately (not queued) so a new report reaches the leader's
+// Pending Tasks list without depending on a queue worker being run.
+class CaseCreated implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 

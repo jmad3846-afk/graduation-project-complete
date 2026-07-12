@@ -57,6 +57,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = AuthState();
     ref.invalidate(selectedCenterIdProvider);
     ref.invalidate(centerShiftProvider);
+    await ref.read(wsProvider).dispose();
   }
 }
 
