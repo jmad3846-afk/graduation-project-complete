@@ -45,6 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Sector Commander Dashboard
     Route::get('/sector-commander/dashboard', [\App\Http\Controllers\SectorCommanderController::class, 'dashboardResponse']);
+    Route::get('/sector-commander/centers/{centerId}/team-status', [\App\Http\Controllers\SectorCommanderController::class, 'teamStatus']);
 
     // Center Dashboard: upcoming shift + check-in
     Route::get('/center/upcoming-shift', [\App\Http\Controllers\CenterShiftController::class, 'upcoming']);

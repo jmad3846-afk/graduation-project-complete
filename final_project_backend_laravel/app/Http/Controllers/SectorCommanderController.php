@@ -31,4 +31,11 @@ class SectorCommanderController extends Controller
             'centers' => CenterResource::collection($centers),
         ]);
     }
+
+    public function teamStatus(int $centerId)
+    {
+        return response()->json([
+            'team_status' => $this->service->getTeamStatusForCenter($centerId),
+        ]);
+    }
 }

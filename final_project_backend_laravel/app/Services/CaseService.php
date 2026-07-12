@@ -96,10 +96,19 @@ class CaseService
     public function assignCenter(int $id, int $centerId): EmsCase
     {
         $case = EmsCase::findOrFail($id);
-        
+
         if ($case->status !== 'waiting' || $case->center_id !== null) {
             throw \Illuminate\Validation\ValidationException::withMessages([
                 'status' => 'Case is already assigned or not waiting.'
+            ]);
+        }
+
+        $sectorCommanderService = app(\App\Services\SectorCommanderService::class);
+        $teamStatus = $sectorCommanderService->getTeamStatusForCenter($centerId);
+
+        if (!$teamStatus || !$teamStatus['can_assign']) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'center_id' => 'This center\'s team is not ready: the leader and scout must be checked in before a task can be assigned.'
             ]);
         }
 

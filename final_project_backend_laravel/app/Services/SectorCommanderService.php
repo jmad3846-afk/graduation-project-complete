@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\EmsCase;
+use App\Models\Shift;
 use App\Models\ShiftAssignment;
 use App\Models\Center;
 use Carbon\Carbon;
@@ -15,6 +16,68 @@ class SectorCommanderService
             ->where('status', 'waiting')
             ->orderBy('created_at','desc')
             ->get();
+    }
+
+    /**
+     * Readiness of every team on today's shifts at the given center: for
+     * each (shift, team_number) group, whether the leader/scout/paramedic
+     * have checked in. A center can be assigned a task if at least one of
+     * its teams is ready (leader and scout checked in; the medic is
+     * optional).
+     */
+    public function getTeamStatusForCenter(int $centerId): ?array
+    {
+        $shifts = Shift::where('center_id', $centerId)
+            ->whereDate('date', now()->toDateString())
+            ->with('assignments.user')
+            ->orderBy('id')
+            ->get();
+
+        if ($shifts->isEmpty()) {
+            return null;
+        }
+
+        $teams = [];
+
+        foreach ($shifts as $shift) {
+            $byTeam = $shift->assignments->groupBy('team_number');
+
+            foreach ($byTeam as $teamNumber => $assignments) {
+                $byRole = ['leader' => null, 'scout' => null, 'paramedic' => null];
+
+                foreach ($assignments as $assignment) {
+                    if (array_key_exists($assignment->role, $byRole)) {
+                        $byRole[$assignment->role] = [
+                            'assignment_id' => $assignment->id,
+                            'user_id' => $assignment->user_id,
+                            'name' => $assignment->user->name ?? null,
+                            'status' => $assignment->status,
+                            'checked_in_at' => $assignment->checked_in_at?->toDateTimeString(),
+                        ];
+                    }
+                }
+
+                $leaderReady = $byRole['leader'] && $byRole['leader']['status'] === 'done';
+                $scoutReady = $byRole['scout'] && $byRole['scout']['status'] === 'done';
+
+                $teams[] = [
+                    'shift_id' => $shift->id,
+                    'team_number' => (int) $teamNumber,
+                    'leader' => $byRole['leader'],
+                    'scout' => $byRole['scout'],
+                    'paramedic' => $byRole['paramedic'],
+                    'can_assign' => $leaderReady && $scoutReady,
+                ];
+            }
+        }
+
+        $readyTeam = collect($teams)->firstWhere('can_assign', true);
+
+        return [
+            'teams' => $teams,
+            'can_assign' => $readyTeam !== null,
+            'ready_team' => $readyTeam,
+        ];
     }
 
     public function getActiveTasks()

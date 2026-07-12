@@ -39,4 +39,9 @@ class ShiftAssignment extends Model
     {
         return $this->belongsTo(User::class, 'checked_in_by');
     }
+
+    public function vehicle()
+    {
+        return $this->belongsTo(Vehicle::class);
+    }
 }

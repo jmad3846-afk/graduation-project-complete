@@ -7,6 +7,7 @@ import '../services/shift_service.dart';
 import '../services/notification_service.dart';
 import '../services/websocket_service.dart';
 import '../services/center_service.dart';
+import '../services/sector_dashboard_service.dart';
 
 final apiProvider = Provider<ApiService>((ref) => ApiService());
 final authServiceProvider = Provider<AuthService>((ref) => AuthService(ref.read(apiProvider)));
@@ -16,3 +17,4 @@ final centerServiceProvider = Provider<CenterService>((ref) => CenterService(ref
 final shiftServiceProvider = Provider<ShiftService>((ref) => ShiftService(ref.read(apiProvider)));
 final notificationServiceProvider = Provider<NotificationService>((ref) => NotificationService(ref.read(apiProvider)));
 final wsProvider = Provider<WebSocketService>((ref) => WebSocketService());
+final sectorDashboardServiceProvider = Provider<SectorDashboardService>((ref) => SectorDashboardService());
