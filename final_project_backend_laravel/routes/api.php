@@ -46,6 +46,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Sector Commander Dashboard
     Route::get('/sector-commander/dashboard', [\App\Http\Controllers\SectorCommanderController::class, 'dashboardResponse']);
 
+    // Center Dashboard: upcoming shift + check-in
+    Route::get('/center/upcoming-shift', [\App\Http\Controllers\CenterShiftController::class, 'upcoming']);
+    Route::post('/shift-assignments/{assignmentId}/check-in', [\App\Http\Controllers\CenterShiftController::class, 'checkIn']);
+
     // VEHICLES API
     Route::get('/vehicles', [VehicleController::class, 'index']);
     Route::patch('/vehicles/{id}/location', [VehicleController::class, 'updateLocation']);

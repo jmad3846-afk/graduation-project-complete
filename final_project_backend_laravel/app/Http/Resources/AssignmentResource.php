@@ -16,6 +16,8 @@ class AssignmentResource extends JsonResource
             'role' => $this->role,
             'team_number' => $this->team_number,
             'vehicle_id' => $this->vehicle_id,
+            'status' => $this->status,
+            'checked_in_at' => $this->checked_in_at?->toDateTimeString(),
         ];
     }
 }

@@ -97,11 +97,21 @@ class MyScheduleView extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: ListTile(
-                          leading: const Icon(Icons.event_available,
-                              color: Color(0xFFE52E2E)),
+                          leading: Icon(
+                            a.isDone ? Icons.check_circle : Icons.event_available,
+                            color: a.isDone ? Colors.green : const Color(0xFFE52E2E),
+                          ),
                           title: Text(a.center.isEmpty ? '—' : a.center),
                           subtitle: Text(
                               '${_formatDay(a.date)}  •  ${a.shiftType}  •  ${a.role}'),
+                          trailing: Chip(
+                            label: Text(
+                              a.isDone ? 'Attended' : 'Selected',
+                              style: const TextStyle(fontSize: 11, color: Colors.white),
+                            ),
+                            backgroundColor: a.isDone ? Colors.green : Colors.grey,
+                            visualDensity: VisualDensity.compact,
+                          ),
                         ),
                       )),
               ],

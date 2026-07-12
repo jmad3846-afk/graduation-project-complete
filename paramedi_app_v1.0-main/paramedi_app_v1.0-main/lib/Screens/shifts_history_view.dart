@@ -724,9 +724,33 @@ class _ScheduleCard extends StatelessWidget {
               ],
             ),
           ),
-          Text(
-            assignment.role,
-            style: const TextStyle(fontWeight: FontWeight.w600),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                assignment.role,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 4),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: assignment.isDone ? Colors.green.shade50 : Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: assignment.isDone ? Colors.green.shade300 : Colors.grey.shade300,
+                  ),
+                ),
+                child: Text(
+                  assignment.isDone ? 'Attended' : 'Selected',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: assignment.isDone ? Colors.green.shade700 : Colors.grey.shade600,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

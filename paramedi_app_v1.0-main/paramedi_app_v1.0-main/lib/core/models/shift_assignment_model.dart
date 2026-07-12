@@ -6,6 +6,8 @@ class ShiftAssignmentModel {
   final String role;
   final int? teamNumber;
   final int? vehicleId;
+  final String status;
+  final String? checkedInAt;
 
   ShiftAssignmentModel({
     required this.id,
@@ -15,7 +17,11 @@ class ShiftAssignmentModel {
     required this.role,
     this.teamNumber,
     this.vehicleId,
+    this.status = 'selected',
+    this.checkedInAt,
   });
+
+  bool get isDone => status == 'done';
 
   factory ShiftAssignmentModel.fromJson(Map<String, dynamic> json) {
     return ShiftAssignmentModel(
@@ -26,6 +32,8 @@ class ShiftAssignmentModel {
       role: json['role']?.toString() ?? '',
       teamNumber: json['team_number'],
       vehicleId: json['vehicle_id'],
+      status: json['status']?.toString() ?? 'selected',
+      checkedInAt: json['checked_in_at']?.toString(),
     );
   }
 }

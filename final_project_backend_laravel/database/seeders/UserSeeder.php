@@ -43,14 +43,14 @@ class UserSeeder extends Seeder
             'center_id' => null,
         ]);
 
-        // Center Manager
+        // Center Manager (Yarmouk Center)
         User::create([
             'name' => 'Center Manager User',
             'phone' => '0501234570',
             'password' => Hash::make('password'),
             'role' => 'center_manager',
             'rank' => null,
-            'center_id' => null,
+            'center_id' => 1, // مركز اليرموك (Yarmouk Center)
         ]);
 
         // Operations
