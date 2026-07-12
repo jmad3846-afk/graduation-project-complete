@@ -41,6 +41,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/movement_logs', [\App\Http\Controllers\MovementLogController::class, 'log']);
     Route::post('/movement_logs/save', [\App\Http\Controllers\MovementLogController::class, 'save']);
     Route::post('/archives', [\App\Http\Controllers\ArchiveController::class, 'store']);
+    Route::middleware('role:admin,manager')->group(function () {
+        Route::get('/archives', [\App\Http\Controllers\ArchiveController::class, 'index']);
+        Route::patch('/archives/{id}/printed', [\App\Http\Controllers\ArchiveController::class, 'markPrinted']);
+    });
 
     // CENTERS API
     Route::get('/centers', [\App\Http\Controllers\CenterController::class, 'index']);

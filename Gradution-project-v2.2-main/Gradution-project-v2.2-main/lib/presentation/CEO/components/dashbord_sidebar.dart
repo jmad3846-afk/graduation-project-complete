@@ -65,6 +65,13 @@ class DashboardSidebar extends ConsumerWidget {
         'notificationCount': 3,
       },
       {
+        'name': 'الأرشيف',
+        'subtitle': 'الحالات المؤرشفة وسجلاتها',
+        'icon': Icons.archive_rounded,
+        'route': AppRouteKeys.archive,
+        'notificationCount': null,
+      },
+      {
         'name': 'الإعدادات',
         'subtitle': 'تخصيص النظام والتفضيلات',
         'icon': Icons.settings_rounded,

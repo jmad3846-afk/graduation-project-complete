@@ -14,6 +14,7 @@ import 'package:ems_op_room/presentation/CEO/components/fleet_monitoring_screen.
 import 'package:ems_op_room/presentation/CEO/components/shift_exchange_screen.dart';
 import 'package:ems_op_room/presentation/CEO/components/shift_management_page.dart';
 import 'package:ems_op_room/presentation/CEO/components/schedule_distribution_page.dart';
+import 'package:ems_op_room/presentation/CEO/components/archive_page.dart';
 
 // Router Keys
 class AppRouteKeys {
@@ -27,6 +28,7 @@ class AppRouteKeys {
   static const String shifts = '/dashboard/shifts';
   static const String schedule = '/dashboard/schedule';
   static const String exchange = '/dashboard/exchange';
+  static const String archive = '/dashboard/archive';
   static const String radiocar = '/radiocar';
   static const String lidar = '/lidar';
   static const String center = '/center';
@@ -172,6 +174,13 @@ final appRouter = GoRouter(
           name: 'Shift Exchange',
           pageBuilder: (context, state) => CustomTransition(
             child: const ShiftExchangePage(),
+          ),
+        ),
+        GoRoute(
+          path: 'archive',
+          name: 'Archive',
+          pageBuilder: (context, state) => CustomTransition(
+            child: const ArchivePage(),
           ),
         ),
       ],

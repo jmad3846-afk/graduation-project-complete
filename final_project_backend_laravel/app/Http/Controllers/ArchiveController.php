@@ -32,4 +32,22 @@ class ArchiveController extends Controller
 
         return response()->json(['message' => 'Archive stored successfully', 'archive' => $archive]);
     }
+
+    public function index()
+    {
+        $archives = Archive::with(['emsCase.patient', 'emsCase.center'])
+            ->orderBy('archived_at', 'desc')
+            ->get();
+
+        return response()->json(['archives' => $archives]);
+    }
+
+    public function markPrinted(int $id)
+    {
+        $archive = Archive::findOrFail($id);
+        $archive->printed = true;
+        $archive->save();
+
+        return response()->json(['message' => 'Archive marked as printed', 'archive' => $archive]);
+    }
 }
