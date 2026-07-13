@@ -45,7 +45,9 @@ class _ReportsBodyState extends ConsumerState<ReportsBody> {
   final _consciousNotifier = ValueNotifier<bool>(false);
 
   // Location Controllers
-  final _transferTypeNotifier = ValueNotifier<String>(LocationInfoCard.transferTypes.first);
+  final _transferTypeNotifier = ValueNotifier<String>(
+    LocationInfoCard.transferTypes.first,
+  );
 
   // Staff Controllers
   final _operationsOfficerController = TextEditingController();
@@ -85,7 +87,7 @@ class _ReportsBodyState extends ConsumerState<ReportsBody> {
 
   Map<String, dynamic> _buildPayload() {
     // Helper to convert empty strings to null
-String? nullIfEmpty(String text) => text.isEmpty ? null : text;
+    String? nullIfEmpty(String text) => text.isEmpty ? null : text;
     return {
       // Required fields
       'caller_name': _callerNameController.text,
@@ -138,11 +140,15 @@ String? nullIfEmpty(String text) => text.isEmpty ? null : text;
     if (!mounted) return;
     final state = ref.read(caseProvider);
     if (state.successMessage != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.successMessage!)));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(state.successMessage!)));
       // Clear form
       _clearAll();
     } else if (state.errorMessage != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
     }
   }
 
@@ -191,90 +197,105 @@ String? nullIfEmpty(String text) => text.isEmpty ? null : text;
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: theme.cardColor,
-              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(12)),
-              boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))],
-            ),
-            child: Column(
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: CallerInfoCard(
-                        primary: primary,
-                        secondary: secondary,
-                        callerNameController: _callerNameController,
-                        relationController: _relationController,
-                        relationNumberController: _relationNumberController,
-                        reportTimeController: _reportTimeController,
-                        reportDateController: _reportDateController,
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    Expanded(
-                      flex: 2,
-                      child: PatientInfoCard(
-                        primary: primary,
-                        secondary: secondary,
-                        patientNameController: _patientNameController,
-                        ageController: _ageController,
-                        weightController: _weightController,
-                        medicalHistoryController: _medicalHistoryController,
-                        oxygenBeforeController: _oxygenBeforeController,
-                        oxygenAfterController: _oxygenAfterController,
-                        emergencyCodeNotifier: _emergencyCodeNotifier,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: MedicalInfoCard(
-                        primary: primary,
-                        secondary: secondary,
-                        oxygenLevelController: _oxygenLevelController,
-                        bloodPressureController: _bloodPressureController,
-                        bloodSugarController: _bloodSugarController,
-                        oxygenSupportLevelController: _oxygenSupportLevelController,
-                        oxygenAfterSupportController: _oxygenAfterSupportController,
-                        symptomsController: _symptomsController,
-                        breathingRateController: _breathingRateController,
-                        intubatedNotifier: _intubatedNotifier,
-                        consciousNotifier: _consciousNotifier,
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    Expanded(
-                      flex: 2,
-                      child: LocationInfoCard(
-                        primary: primary,
-                        secondary: secondary,
-                        transferTypeNotifier: _transferTypeNotifier,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                StaffInfoCard(
-                  primary,
-                  secondary,
-                  operationsOfficerController: _operationsOfficerController,
-                  sectorCommanderController: _sectorCommanderController,
-                  medicalAidGivenController: _medicalAidGivenController,
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                  onPressed: _submit,
-                  child: const Text('Submit'),
+              borderRadius: const BorderRadius.vertical(
+                bottom: Radius.circular(12),
+              ),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 8,
+                  offset: Offset(0, 4),
                 ),
               ],
+            ),
+            child: Material(
+              type: MaterialType.transparency,
+              child: Column(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: CallerInfoCard(
+                          primary: primary,
+                          secondary: secondary,
+                          callerNameController: _callerNameController,
+                          relationController: _relationController,
+                          relationNumberController: _relationNumberController,
+                          reportTimeController: _reportTimeController,
+                          reportDateController: _reportDateController,
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        flex: 2,
+                        child: PatientInfoCard(
+                          primary: primary,
+                          secondary: secondary,
+                          patientNameController: _patientNameController,
+                          ageController: _ageController,
+                          weightController: _weightController,
+                          medicalHistoryController: _medicalHistoryController,
+                          oxygenBeforeController: _oxygenBeforeController,
+                          oxygenAfterController: _oxygenAfterController,
+                          emergencyCodeNotifier: _emergencyCodeNotifier,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: MedicalInfoCard(
+                          primary: primary,
+                          secondary: secondary,
+                          oxygenLevelController: _oxygenLevelController,
+                          bloodPressureController: _bloodPressureController,
+                          bloodSugarController: _bloodSugarController,
+                          oxygenSupportLevelController:
+                              _oxygenSupportLevelController,
+                          oxygenAfterSupportController:
+                              _oxygenAfterSupportController,
+                          symptomsController: _symptomsController,
+                          breathingRateController: _breathingRateController,
+                          intubatedNotifier: _intubatedNotifier,
+                          consciousNotifier: _consciousNotifier,
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        flex: 2,
+                        child: LocationInfoCard(
+                          primary: primary,
+                          secondary: secondary,
+                          transferTypeNotifier: _transferTypeNotifier,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  StaffInfoCard(
+                    primary,
+                    secondary,
+                    operationsOfficerController: _operationsOfficerController,
+                    sectorCommanderController: _sectorCommanderController,
+                    medicalAidGivenController: _medicalAidGivenController,
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onPressed: _submit,
+                    child: const Text('Submit'),
+                  ),
+                ],
+              ),
             ),
           ),
         ],

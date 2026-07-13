@@ -388,45 +388,51 @@ class ShiftPlanService
     }
 
     /**
-     * Full center/day/shift/role grid for the plan, including empty slots,
-     * for the admin Schedule Distribution page.
+     * Center/day/shift/role grid for the admin Schedule Distribution page,
+     * built directly from confirmed shift_poll_reservations rather than the
+     * scheduler's ShiftAssignment output — one box per (center, day,
+     * shift_type), with a role left null if nobody reserved that slot.
      */
     public function scheduleGrid(ShiftPlan $plan): array
     {
-        $shifts = Shift::where('shift_plan_id', $plan->id)
-            ->with(['center', 'assignments.user'])
-            ->orderBy('date')
-            ->orderBy('center_id')
-            ->orderBy('type')
+        $reservations = ShiftPollReservation::where('shift_plan_id', $plan->id)
+            ->where('status', 'confirmed')
+            ->with(['center', 'user'])
             ->get();
+
+        $groups = $reservations->groupBy(fn ($r) => $r->center_id . '|' . $r->day . '|' . $r->shift_type);
 
         $rows = [];
 
-        foreach ($shifts as $shift) {
-            for ($team = 1; $team <= $shift->team_number; $team++) {
-                $byRole = ['leader' => null, 'scout' => null, 'paramedic' => null];
+        foreach ($groups as $key => $group) {
+            [$centerId, $day, $shiftType] = explode('|', $key);
 
-                foreach ($shift->assignments as $assignment) {
-                    if ((int) $assignment->team_number === $team && array_key_exists($assignment->role, $byRole)) {
-                        $byRole[$assignment->role] = [
-                            'user_id' => $assignment->user_id,
-                            'name' => $assignment->user->name ?? null,
-                        ];
-                    }
+            $byRole = ['leader' => null, 'scout' => null, 'paramedic' => null];
+
+            foreach ($group as $reservation) {
+                if (array_key_exists($reservation->rank, $byRole)) {
+                    $byRole[$reservation->rank] = [
+                        'user_id' => $reservation->user_id,
+                        'name' => $reservation->user->name ?? null,
+                    ];
                 }
-
-                $rows[] = [
-                    'shift_id' => $shift->id,
-                    'center' => $shift->center->name ?? null,
-                    'date' => $shift->date,
-                    'shift_type' => $shift->type,
-                    'team' => $team,
-                    'leader' => $byRole['leader'],
-                    'scout' => $byRole['scout'],
-                    'paramedic' => $byRole['paramedic'],
-                ];
             }
+
+            $date = Carbon::create($plan->year, $plan->month, (int) $day)->toDateString();
+
+            $rows[] = [
+                'center' => $group->first()->center->name ?? null,
+                'date' => $date,
+                'shift_type' => $shiftType,
+                'leader' => $byRole['leader'],
+                'scout' => $byRole['scout'],
+                'paramedic' => $byRole['paramedic'],
+            ];
         }
+
+        usort($rows, function ($a, $b) {
+            return [$a['date'], $a['center'], $a['shift_type']] <=> [$b['date'], $b['center'], $b['shift_type']];
+        });
 
         return $rows;
     }
