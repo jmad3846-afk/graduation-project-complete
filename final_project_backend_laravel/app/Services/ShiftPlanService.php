@@ -154,204 +154,63 @@ class ShiftPlanService
         }
     }
 
+    /**
+     * Build the schedule strictly from confirmed reservations: one
+     * ShiftAssignment per confirmed shift_poll_reservations row, no
+     * fairness/preference backfill. A slot nobody reserved stays unfilled —
+     * the published schedule must equal exactly what people reserved.
+     */
     public function buildSchedule(ShiftPlan $plan): array
     {
         $this->assertStatusTransition($plan, 'polling_paramedics');
 
         return DB::transaction(function () use ($plan) {
-            // mark building
             $plan->status = 'building';
             $plan->save();
 
-            // load polls
-            $polls = ShiftPoll::where('shift_plan_id', $plan->id)->get();
+            $shiftsBySlot = Shift::where('shift_plan_id', $plan->id)
+                ->get()
+                ->keyBy(fn ($s) => $s->center_id . '|' . (int) Carbon::parse($s->date)->day . '|' . $s->type);
 
-            // candidate pools by role
-            $candidates = [
-                'leader' => User::where('role', 'paramedic')->where('rank', 'leader')->get(),
-                'scout' => User::where('role', 'paramedic')->where('rank', 'scout')->get(),
-                'paramedic' => User::where('role', 'paramedic')->where('rank', 'paramedic')->get(),
-            ];
-
-            // track assignment counts to distribute fairly
-            $assignmentCounts = [];
-
-            foreach (User::all() as $u) {
-                $assignmentCounts[$u->id] = 0;
-            }
+            $reservations = ShiftPollReservation::where('shift_plan_id', $plan->id)
+                ->where('status', 'confirmed')
+                ->get();
 
             $unfilled = [];
 
-            // Stage 1: resolve WHO works and WHERE, directly from confirmed
-            // reservations. A reservation now identifies an exact
-            // (center_id, day, shift_type, rank) slot chosen by the user
-            // themself — the scheduler no longer decides center for reserved
-            // users, it only converts the reservation into an assignment.
-            // Built once, reused by every shift lookup below (stage 2) instead
-            // of re-querying reservations per shift.
-            $mandatoryUserIdsBySlot = ShiftPollReservation::where('shift_plan_id', $plan->id)
-                ->where('status', 'confirmed')
-                ->get()
-                ->keyBy(fn ($r) => $r->center_id . '|' . $r->day . '|' . $r->shift_type . '|' . $r->rank)
-                ->map(fn ($r) => $r->user_id);
+            foreach ($reservations as $reservation) {
+                $slotKey = $reservation->center_id . '|' . $reservation->day . '|' . $reservation->shift_type;
+                $shift = $shiftsBySlot->get($slotKey);
 
-            // iterate shifts in date order
-            $shifts = Shift::where('shift_plan_id', $plan->id)->orderBy('date')->orderBy('center_id')->orderBy('type')->get();
-
-            // Stage 2: distribute the resolved people (mandatory reservations
-            // first, then normal fairness/eligibility) across centers using the
-            // existing per-shift iteration — unchanged team/fairness/no-duplicate
-            // rules, just center selection instead of reservation-driven pinning.
-            foreach ($shifts as $shift) {
-                for ($team = 1; $team <= $shift->team_number; $team++) {
-                    $assignedIds = [];
-
-                    foreach (['leader', 'scout', 'paramedic'] as $role) {
-                        $user = $this->pickCandidateForRole($role, $shift, $candidates[$role], $assignmentCounts, $plan, $mandatoryUserIdsBySlot);
-
-                        if ($user) {
-                            $assignment = ShiftAssignment::create([
-                                'shift_id' => $shift->id,
-                                'user_id' => $user->id,
-                                'role' => $role,
-                                'team_number' => $team,
-                                'vehicle_id' => null,
-                                'assigned_at' => now(),
-                            ]);
-
-                            $assignmentCounts[$user->id] = ($assignmentCounts[$user->id] ?? 0) + 1;
-                            $assignedIds[] = $user->id;
-                        } else {
-                            $unfilled[] = [
-                                'shift_id' => $shift->id,
-                                'team' => $team,
-                                'role' => $role,
-                            ];
-                        }
-                    }
+                if (!$shift) {
+                    $unfilled[] = [
+                        'center_id' => $reservation->center_id,
+                        'day' => $reservation->day,
+                        'shift_type' => $reservation->shift_type,
+                        'role' => $reservation->rank,
+                        'reason' => 'no matching shift for reservation',
+                    ];
+                    continue;
                 }
+
+                ShiftAssignment::updateOrCreate(
+                    [
+                        'shift_id' => $shift->id,
+                        'role' => $reservation->rank,
+                        'team_number' => 1,
+                    ],
+                    [
+                        'user_id' => $reservation->user_id,
+                        'vehicle_id' => null,
+                        'assigned_at' => now(),
+                    ]
+                );
             }
 
             return ['assignments' => ShiftAssignment::whereHas('shift', function ($q) use ($plan) {
                 $q->where('shift_plan_id', $plan->id);
             })->get(), 'unfilled' => $unfilled];
         });
-    }
-
-    protected function pickCandidateForRole(string $role, Shift $shift, Collection $pool, array $assignmentCounts, ShiftPlan $plan, $mandatoryUserIdsBySlot = null): ?User
-    {
-        $date = Carbon::parse($shift->date);
-        $day = (int) $date->day;
-
-        // Confirmed reservations are the primary source of truth for this
-        // exact (center_id, day, shift_type, rank) slot — the user chose the
-        // center themself when reserving, so the scheduler only converts the
-        // reservation into an assignment here; it never picks a different
-        // center for a reserved user.
-        $reservedUserId = $mandatoryUserIdsBySlot[$shift->center_id . '|' . $day . '|' . $shift->type . '|' . $role] ?? null;
-
-        if ($reservedUserId !== null) {
-            $reservedUser = $pool->firstWhere('id', $reservedUserId);
-
-            if ($reservedUser) {
-                $hasSameDay = ShiftAssignment::where('user_id', $reservedUser->id)
-                    ->whereHas('shift', function ($q) use ($date) {
-                        $q->whereDate('date', $date->toDateString());
-                    })->exists();
-
-                if (!$hasSameDay) {
-                    return $reservedUser;
-                }
-            }
-        }
-
-        $candidates = $pool->filter(function ($user) use ($date, $day, $plan, $shift, $mandatoryUserIdsBySlot) {
-            // user cannot work two shifts on same day
-            $hasSameDay = ShiftAssignment::where('user_id', $user->id)->whereHas('shift', function ($q) use ($date) {
-                $q->whereDate('date', $date->toDateString());
-            })->exists();
-
-            if ($hasSameDay) {
-                return false;
-            }
-
-            // Don't let the legacy fallback consume a user on an earlier shift
-            // the same day when that user holds a confirmed reservation for a
-            // *different* (center, shift_type) slot later that day — the
-            // reservation must win regardless of which shift/center happens to
-            // be processed first.
-            $reservedElsewhereToday = false;
-            if ($mandatoryUserIdsBySlot !== null) {
-                foreach ($mandatoryUserIdsBySlot as $slotKey => $mandatoryUserId) {
-                    if ($mandatoryUserId !== $user->id) {
-                        continue;
-                    }
-                    [$slotCenterId, $slotDay, $slotType, $slotRank] = explode('|', $slotKey);
-                    $isSameShift = (int) $slotCenterId === (int) $shift->center_id && $slotType === $shift->type;
-                    if ((int) $slotDay === $day && !$isSameShift) {
-                        $reservedElsewhereToday = true;
-                        break;
-                    }
-                }
-            }
-
-            if ($reservedElsewhereToday) {
-                return false;
-            }
-
-            $poll = ShiftPoll::where('shift_plan_id', $plan->id)->where('user_id', $user->id)->first();
-
-            if ($poll) {
-                if (!empty($poll->unavailable_days)) {
-                    foreach ($poll->unavailable_days as $ud) {
-                        if (is_array($ud) && isset($ud['day']) && (isset($ud['shift']) || isset($ud['shift_type']))) {
-                            $shiftKey = $ud['shift'] ?? $ud['shift_type'];
-                            if ((int)$ud['day'] === $day && $shiftKey === $shift->type) {
-                                return false;
-                            }
-                        } else {
-                            if (is_numeric($ud) && (int)$ud === $day) return false;
-                            if (is_string($ud) && \Illuminate\Support\Str::startsWith($ud, (string)$date->toDateString())) return false;
-                        }
-                    }
-                }
-            }
-                // Preferred shift check
-                if ($poll && !empty($poll->preferred_days)) {
-                    $hasPreferred = false;
-                    foreach ($poll->preferred_days as $ps) {
-                        if (is_array($ps) && isset($ps['day']) && (isset($ps['shift']) || isset($ps['shift_type']))) {
-                            $prefKey = $ps['shift'] ?? $ps['shift_type'];
-                            if ((int)$ps['day'] === $day && $prefKey === $shift->type) {
-                                $hasPreferred = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (!$hasPreferred) {
-                        return false;
-                    }
-                }
-
-            return true;
-        });
-
-        if ($candidates->isEmpty()) return null;
-
-        // distribute fairly: prefer the candidate with the fewest assignments so far
-        $best = null;
-        $bestCount = null;
-
-        foreach ($candidates as $candidate) {
-            $count = $assignmentCounts[$candidate->id] ?? 0;
-
-            if ($bestCount === null || $count < $bestCount) {
-                $best = $candidate;
-                $bestCount = $count;
-            }
-        }
-
-        return $best;
     }
 
     /**
@@ -388,51 +247,50 @@ class ShiftPlanService
     }
 
     /**
-     * Center/day/shift/role grid for the admin Schedule Distribution page,
-     * built directly from confirmed shift_poll_reservations rather than the
-     * scheduler's ShiftAssignment output — one box per (center, day,
-     * shift_type), with a role left null if nobody reserved that slot.
+     * Center/day/shift/role grid for the admin Schedule Distribution page.
+     * Reads ShiftAssignment (not reservations) so that approved shift swaps
+     * — which mutate ShiftAssignment.user_id after publish — stay reflected
+     * here. buildSchedule() now creates assignments 1:1 from confirmed
+     * reservations with no backfill, so this is faithful to what was
+     * actually reserved unless a swap has since changed it.
      */
     public function scheduleGrid(ShiftPlan $plan): array
     {
-        $reservations = ShiftPollReservation::where('shift_plan_id', $plan->id)
-            ->where('status', 'confirmed')
-            ->with(['center', 'user'])
+        $shifts = Shift::where('shift_plan_id', $plan->id)
+            ->with(['center', 'assignments.user'])
+            ->orderBy('date')
+            ->orderBy('center_id')
+            ->orderBy('type')
             ->get();
-
-        $groups = $reservations->groupBy(fn ($r) => $r->center_id . '|' . $r->day . '|' . $r->shift_type);
 
         $rows = [];
 
-        foreach ($groups as $key => $group) {
-            [$centerId, $day, $shiftType] = explode('|', $key);
-
+        foreach ($shifts as $shift) {
             $byRole = ['leader' => null, 'scout' => null, 'paramedic' => null];
 
-            foreach ($group as $reservation) {
-                if (array_key_exists($reservation->rank, $byRole)) {
-                    $byRole[$reservation->rank] = [
-                        'user_id' => $reservation->user_id,
-                        'name' => $reservation->user->name ?? null,
+            foreach ($shift->assignments as $assignment) {
+                if (array_key_exists($assignment->role, $byRole)) {
+                    $byRole[$assignment->role] = [
+                        'user_id' => $assignment->user_id,
+                        'name' => $assignment->user->name ?? null,
                     ];
                 }
             }
 
-            $date = Carbon::create($plan->year, $plan->month, (int) $day)->toDateString();
+            if (!$byRole['leader'] && !$byRole['scout'] && !$byRole['paramedic']) {
+                continue;
+            }
 
             $rows[] = [
-                'center' => $group->first()->center->name ?? null,
-                'date' => $date,
-                'shift_type' => $shiftType,
+                'shift_id' => $shift->id,
+                'center' => $shift->center->name ?? null,
+                'date' => $shift->date,
+                'shift_type' => $shift->type,
                 'leader' => $byRole['leader'],
                 'scout' => $byRole['scout'],
                 'paramedic' => $byRole['paramedic'],
             ];
         }
-
-        usort($rows, function ($a, $b) {
-            return [$a['date'], $a['center'], $a['shift_type']] <=> [$b['date'], $b['center'], $b['shift_type']];
-        });
 
         return $rows;
     }

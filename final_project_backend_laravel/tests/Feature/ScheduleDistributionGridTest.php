@@ -14,14 +14,17 @@ class ScheduleDistributionGridTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_schedule_grid_groups_reservations_by_center_day_and_shift(): void
+    public function test_schedule_grid_reflects_assignments_built_from_confirmed_reservations(): void
     {
         $center = Center::create(['name' => 'Center A', 'status' => 'active']);
-        $admin = User::factory()->create(['role' => 'admin']);
         $leader = User::factory()->create(['role' => 'paramedic', 'rank' => 'leader']);
         $scout = User::factory()->create(['role' => 'paramedic', 'rank' => 'scout']);
 
-        $plan = ShiftPlan::create(['month' => 7, 'year' => 2026, 'status' => 'building']);
+        $service = app(ShiftPlanService::class);
+        $plan = $service->createMonthlyPlan(7, 2026);
+        $plan = $service->startLeaderPoll($plan);
+        $plan = $service->startScoutPoll($plan);
+        $plan = $service->startParamedicPoll($plan);
 
         ShiftPollReservation::create([
             'shift_plan_id' => $plan->id,
@@ -43,7 +46,7 @@ class ScheduleDistributionGridTest extends TestCase
             'status' => 'confirmed',
         ]);
 
-        // Not confirmed yet: must not appear in the grid.
+        // Not confirmed yet: must not become an assignment or appear in the grid.
         ShiftPollReservation::create([
             'shift_plan_id' => $plan->id,
             'center_id' => $center->id,
@@ -54,13 +57,15 @@ class ScheduleDistributionGridTest extends TestCase
             'status' => 'reserved',
         ]);
 
-        $rows = app(ShiftPlanService::class)->scheduleGrid($plan);
+        $service->buildSchedule($plan);
+
+        $rows = $service->scheduleGrid($plan);
 
         $this->assertCount(1, $rows);
         $row = $rows[0];
 
         $this->assertSame('Center A', $row['center']);
-        $this->assertSame('2026-07-10', $row['date']);
+        $this->assertSame('2026-07-10', \Illuminate\Support\Carbon::parse($row['date'])->toDateString());
         $this->assertSame('morning', $row['shift_type']);
         $this->assertSame($leader->id, $row['leader']['user_id']);
         $this->assertSame($scout->id, $row['scout']['user_id']);

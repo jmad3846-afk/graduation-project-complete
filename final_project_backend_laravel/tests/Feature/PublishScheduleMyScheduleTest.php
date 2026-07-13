@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Center;
 use App\Models\ShiftPlan;
+use App\Models\ShiftPollReservation;
 use App\Services\ShiftPlanService;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -26,6 +27,16 @@ class PublishScheduleMyScheduleTest extends TestCase
         $plan = $service->startLeaderPoll($plan);
         $plan = $service->startScoutPoll($plan);
         $plan = $service->startParamedicPoll($plan);
+
+        ShiftPollReservation::create([
+            'shift_plan_id' => $plan->id,
+            'center_id' => $center->id,
+            'user_id' => $leader->id,
+            'day' => 5,
+            'shift_type' => 'morning',
+            'rank' => 'leader',
+            'status' => 'confirmed',
+        ]);
 
         $this->actingAs($admin)
             ->postJson("/api/admin/shift-plans/{$plan->id}/build")

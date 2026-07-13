@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Center;
 use App\Models\ShiftAssignment;
 use App\Models\ShiftPlan;
+use App\Models\ShiftPollReservation;
 use App\Models\User;
 use App\Services\ShiftPlanService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -16,8 +17,8 @@ class ShiftPlanDoubleSubmitTest extends TestCase
 
     protected function makePlanReadyForBuild(): ShiftPlan
     {
-        Center::create(['name' => 'Center A', 'status' => 'active']);
-        User::factory()->create(['role' => 'paramedic', 'rank' => 'leader']);
+        $center = Center::create(['name' => 'Center A', 'status' => 'active']);
+        $leader = User::factory()->create(['role' => 'paramedic', 'rank' => 'leader']);
         User::factory()->create(['role' => 'paramedic', 'rank' => 'scout']);
         User::factory()->create(['role' => 'paramedic', 'rank' => 'paramedic']);
 
@@ -26,6 +27,16 @@ class ShiftPlanDoubleSubmitTest extends TestCase
         $plan = $service->startLeaderPoll($plan);
         $plan = $service->startScoutPoll($plan);
         $plan = $service->startParamedicPoll($plan);
+
+        ShiftPollReservation::create([
+            'shift_plan_id' => $plan->id,
+            'center_id' => $center->id,
+            'user_id' => $leader->id,
+            'day' => 5,
+            'shift_type' => 'morning',
+            'rank' => 'leader',
+            'status' => 'confirmed',
+        ]);
 
         return $plan;
     }
