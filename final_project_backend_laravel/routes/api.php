@@ -17,6 +17,7 @@ Route::post('/paramedic/login', [ParamedicAuthController::class, 'login']);
 
 // Citizen External Mobile APIs
 Route::prefix('citizen')->group(function () {
+    Route::post('/login', [\App\Http\Controllers\CitizenAuthController::class, 'login']);
     Route::post('/cases', [\App\Http\Controllers\CitizenCaseController::class, 'store']);
     Route::get('/cases/{trackingToken}', [\App\Http\Controllers\CitizenCaseController::class, 'show']);
 });
@@ -81,6 +82,11 @@ Route::middleware('auth:sanctum')->group(function () {
     // NOTIFICATIONS API
     Route::post('/notifications', [NotificationController::class, 'send']);
     Route::get('/notifications', [NotificationController::class, 'getUserNotifications']);
+
+    // CITIZEN SCOPES
+    Route::prefix('citizen')->group(function () {
+        Route::post('/logout', [\App\Http\Controllers\CitizenAuthController::class, 'logout']);
+    });
 
     // PARAMEDIC SCOPES
     Route::prefix('paramedic')->group(function () {

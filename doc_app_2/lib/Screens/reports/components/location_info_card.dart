@@ -4,20 +4,46 @@ import 'report_shared_widgets.dart';
 class LocationInfoCard extends StatelessWidget {
   final Color primary;
   final Color secondary;
+  final ValueNotifier<String> transferTypeNotifier;
 
-  const LocationInfoCard(this.primary, this.secondary, {super.key});
+  static const List<String> transferTypes = [
+    'Hospital-to-Hospital',
+    'Dispensary-to-Hospital',
+    'Clinic-to-Hospital',
+    'Home-to-Hospital',
+    'Hospital-to-Home',
+  ];
+
+  const LocationInfoCard({
+    required this.primary,
+    required this.secondary,
+    required this.transferTypeNotifier,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return infoCard(
       "Location and Destination",
       [
-        reportTextField("Location", primary, secondary),
-        reportTextField("Supervising Doctor", primary, secondary),
-        reportTextField("Doctor's Phone", primary, secondary),
-        reportTextField("Going To", primary, secondary),
-        reportTextField("Receiving Doctor", primary, secondary),
-        reportTextField("Hospital Phone", primary, secondary),
+        ValueListenableBuilder<String>(
+          valueListenable: transferTypeNotifier,
+          builder: (context, value, _) => DropdownButtonFormField<String>(
+            initialValue: transferTypes.contains(value) ? value : null,
+            decoration: InputDecoration(
+              labelText: 'Transfer Type',
+              labelStyle: TextStyle(color: secondary),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
+            ),
+            style: TextStyle(color: primary),
+            items: transferTypes
+                .map((t) => DropdownMenuItem(value: t, child: Text(t)))
+                .toList(),
+            onChanged: (v) {
+              if (v != null) transferTypeNotifier.value = v;
+            },
+          ),
+        ),
       ],
       primary,
     );

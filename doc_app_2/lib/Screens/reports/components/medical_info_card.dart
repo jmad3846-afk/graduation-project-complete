@@ -1,3 +1,4 @@
+// lib/presentation/reports/components/medical_info_card.dart
 import 'package:flutter/material.dart';
 import 'report_shared_widgets.dart';
 
@@ -5,7 +6,32 @@ class MedicalInfoCard extends StatelessWidget {
   final Color primary;
   final Color secondary;
 
-  const MedicalInfoCard(this.primary, this.secondary, {super.key});
+  // Controllers for editable fields
+  final TextEditingController oxygenLevelController;
+  final TextEditingController bloodPressureController;
+  final TextEditingController bloodSugarController;
+  final TextEditingController oxygenSupportLevelController;
+  final TextEditingController oxygenAfterSupportController;
+  final TextEditingController symptomsController;
+  final TextEditingController breathingRateController;
+  // Boolean notifiers
+  final ValueNotifier<bool> intubatedNotifier;
+  final ValueNotifier<bool> consciousNotifier;
+
+  const MedicalInfoCard({
+    required this.primary,
+    required this.secondary,
+    required this.oxygenLevelController,
+    required this.bloodPressureController,
+    required this.bloodSugarController,
+    required this.oxygenSupportLevelController,
+    required this.oxygenAfterSupportController,
+    required this.symptomsController,
+    required this.breathingRateController,
+    required this.intubatedNotifier,
+    required this.consciousNotifier,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -15,29 +41,36 @@ class MedicalInfoCard extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: reportTextField("Oxygen Level", primary, secondary),
+              child: reportTextField("Oxygen Level", primary, secondary, controller: oxygenLevelController),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: reportTextField("Blood Pressure", primary, secondary),
+              child: reportTextField("Blood Pressure", primary, secondary, controller: bloodPressureController),
             ),
           ],
         ),
-        reportTextField("Blood Sugar", primary, secondary),
-        reportTextField("Oxygen Support Level", primary, secondary),
-        reportTextField(
-            "Oxygen Level After Support", primary, secondary),
-        reportRadioRow(
-          "Is Patient Intubated?",
-          ["Yes", "No"],
-          primary,
-          secondary,
+        reportTextField("Blood Sugar", primary, secondary, controller: bloodSugarController),
+        reportTextField("Oxygen Support Level", primary, secondary, controller: oxygenSupportLevelController),
+        reportTextField("Oxygen Level After Support", primary, secondary, controller: oxygenAfterSupportController),
+        reportTextField("Symptoms", primary, secondary, controller: symptomsController, maxLines: 3),
+        reportTextField("Breathing Rate", primary, secondary, controller: breathingRateController),
+        ValueListenableBuilder<bool>(
+          valueListenable: intubatedNotifier,
+          builder: (context, value, _) => SwitchListTile(
+            title: const Text("Is Patient Intubated?"),
+            value: value,
+            activeThumbColor: primary,
+            onChanged: (v) => intubatedNotifier.value = v,
+          ),
         ),
-        reportRadioRow(
-          "Is Patient Conscious?",
-          ["Yes", "No"],
-          primary,
-          secondary,
+        ValueListenableBuilder<bool>(
+          valueListenable: consciousNotifier,
+          builder: (context, value, _) => SwitchListTile(
+            title: const Text("Is Patient Conscious?"),
+            value: value,
+            activeThumbColor: primary,
+            onChanged: (v) => consciousNotifier.value = v,
+          ),
         ),
       ],
       primary,

@@ -41,8 +41,10 @@ Widget reportTextField(
     Color primary,
     Color secondary, {
       int maxLines = 1,
+      TextEditingController? controller,
     }) {
   return TextField(
+    controller: controller,
     maxLines: maxLines,
     style: TextStyle(color: primary),
     decoration: InputDecoration(
@@ -59,8 +61,10 @@ Widget reportRadioRow(
     String label,
     List<String> options,
     Color primary,
-    Color secondary,
-    ) {
+    Color secondary, {
+      required String? groupValue,
+      required ValueChanged<String?> onChanged,
+    }) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -70,10 +74,10 @@ Widget reportRadioRow(
             .map(
               (o) => Row(
             children: [
-              Radio(
+              Radio<String>(
                 value: o,
-                groupValue: null,
-                onChanged: (_) {},
+                groupValue: groupValue,
+                onChanged: onChanged,
                 fillColor: WidgetStateProperty.all(primary),
               ),
               Text(o, style: TextStyle(color: secondary)),
