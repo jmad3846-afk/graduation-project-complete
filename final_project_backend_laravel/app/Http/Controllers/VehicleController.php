@@ -7,9 +7,16 @@ use Illuminate\Http\Request;
 
 class VehicleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Vehicle::all());
+        $user = $request->user();
+        $query = Vehicle::query();
+
+        if ($user && $user->role === 'center_manager') {
+            $query->where('center_id', $user->center_id);
+        }
+
+        return response()->json($query->get());
     }
 
     public function updateLocation(Request $request, $id)

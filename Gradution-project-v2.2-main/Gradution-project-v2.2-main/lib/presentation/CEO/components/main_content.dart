@@ -7,7 +7,7 @@ import 'package:ems_op_room/core/providers/overview_provider.dart';
 import 'package:ems_op_room/presentation/CEO/components/shift_state_card.dart';
 import 'package:ems_op_room/presentation/CEO/components/active_missions.dart';
 import 'package:ems_op_room/presentation/CEO/components/center_status_card.dart';
-import 'package:ems_op_room/presentation/CEO/components/map_placeholder.dart' hide CenterStatusCard;
+import 'package:ems_op_room/core/widgets/fleet_map_widget.dart';
 
 class MainContent extends ConsumerWidget {
   final bool isMobile;
@@ -126,7 +126,7 @@ class MainContent extends ConsumerWidget {
                           children: [
                             SizedBox(height: 300, child: ActiveMissionsCard(activeMissions: activeMissions)),
                             const SizedBox(height: 16),
-                            const MapPlaceholder(),
+                            const FleetMapWidget(height: 300),
                           ],
                         )
                       : SizedBox(
@@ -139,7 +139,7 @@ class MainContent extends ConsumerWidget {
                               const SizedBox(width: 16),
                               const Expanded(
                                 flex: 2,
-                                child: MapPlaceholder(),
+                                child: FleetMapWidget(height: 300),
                               ),
                             ],
                           ),

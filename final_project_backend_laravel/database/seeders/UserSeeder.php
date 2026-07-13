@@ -82,6 +82,7 @@ class UserSeeder extends Seeder
             'rank' => null,
             'center_id' => null,
         ]);
+        //=================================================================================
 
         // EMS Personnel (role = paramedic)
         User::create([

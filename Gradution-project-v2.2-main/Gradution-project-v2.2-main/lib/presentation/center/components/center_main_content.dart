@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ems_op_room/core/providers/center_selection_provider.dart';
+import 'package:ems_op_room/core/widgets/fleet_map_widget.dart';
 import 'vehicle_status_card.dart';
 
-class CenterMainContent extends StatelessWidget {
+class CenterMainContent extends ConsumerWidget {
   const CenterMainContent({super.key});
 
   static const List<Map<String, dynamic>> centerVehicles = [
@@ -22,7 +25,9 @@ class CenterMainContent extends StatelessWidget {
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final centerId = ref.watch(selectedCenterIdProvider);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -54,18 +59,7 @@ class CenterMainContent extends StatelessWidget {
           ),
         ),
         const Divider(),
-        Container(
-          height: 400,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: Colors.blueGrey.shade100,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: const Text(
-            'خريطة تظهر موقع المركبة 104 (في مهمة) و 102 (في المركز)',
-            style: TextStyle(color: Colors.blueGrey),
-          ),
-        ),
+        FleetMapWidget(centerId: centerId, height: 400),
       ],
     );
   }

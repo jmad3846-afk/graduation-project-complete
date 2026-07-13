@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use, avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:ems_op_room/core/widgets/fleet_map_widget.dart';
 
 class FleetMonitoringPage extends StatelessWidget {
   const FleetMonitoringPage({super.key});
@@ -32,15 +33,11 @@ class FleetMonitoringPage extends StatelessWidget {
         body: Column(
           children: [
             // منطقة الخريطة (الجزء العلوي)
-            Expanded(
+            const Expanded(
               flex: 1,
-              child: Container(
-                color: Colors.grey.shade200,
-                alignment: Alignment.center,
-                child: const Text(
-                  'منطقة عرض الخريطة وتتبع المركبات ',
-                  style: TextStyle(fontSize: 18, color: Colors.black54),
-                ),
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: FleetMapWidget(height: double.infinity),
               ),
             ),
             const Divider(height: 1, color: Colors.grey),

@@ -4,9 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ems_op_room/core/providers/service_providers.dart';
 import 'package:ems_op_room/core/providers/sector_dashboard_provider.dart';
 
+import 'package:ems_op_room/core/widgets/fleet_map_widget.dart';
 import 'components/active_tasks_card.dart';
 import 'components/waiting_tasks_card.dart';
-import 'components/team_status_card.dart';
 import 'components/centers_status_card.dart';
 
 class Lidar extends ConsumerStatefulWidget {
@@ -66,8 +66,8 @@ class _LidarState extends ConsumerState<Lidar> {
                             child: WaitingTasksCard(isDesktop: true),
                           ),
                           const SizedBox(width: 16),
-                          Expanded(flex: 3,
-                            child: TeamStatusCard(isDesktop: true),
+                          const Expanded(flex: 3,
+                            child: FleetMapWidget(height: double.infinity),
                           ),
                           const SizedBox(width: 16),
                           Expanded(flex:3,
@@ -88,7 +88,7 @@ class _LidarState extends ConsumerState<Lidar> {
                       SizedBox(height: 16),
                       Row(
                         children: [
-                          Expanded(flex:2,child: TeamStatusCard(isDesktop: false)),
+                          Expanded(flex:2,child: FleetMapWidget(height: 300)),
                           SizedBox(width: 16),
                           Expanded(flex:2,child: CentersStatusCard(isDesktop: false)),
                         ],
