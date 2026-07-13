@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\AssignmentResource;
 use App\Models\ShiftAssignment;
 use App\Models\ShiftPlan;
-use App\Models\ShiftPlanCompensation;
+use App\Services\ShiftPlanService;
 use Illuminate\Http\Request;
 
 class MyScheduleController extends Controller
@@ -40,15 +40,16 @@ class MyScheduleController extends Controller
             ->orderBy('assigned_at')
             ->get();
 
-        $compensation = ShiftPlanCompensation::where('shift_plan_id', $plan->id)
-            ->where('user_id', $user->id)
-            ->first();
+        // Only attended (checked-in) shifts count toward the shown shift
+        // count and compensation — a "selected" shift the user never
+        // checked into is not paid.
+        $attendedCount = $assignments->where('status', 'done')->count();
 
         return response()->json([
             'month' => $plan->month,
             'year' => $plan->year,
-            'compensation' => $compensation->monthly_compensation ?? 0,
-            'shift_count' => $compensation->monthly_shift_count ?? $assignments->count(),
+            'compensation' => $attendedCount * ShiftPlanService::COMPENSATION_PER_SHIFT,
+            'shift_count' => $attendedCount,
             'assignments' => AssignmentResource::collection($assignments),
         ]);
     }

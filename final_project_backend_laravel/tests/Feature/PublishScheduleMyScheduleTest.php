@@ -48,25 +48,41 @@ class PublishScheduleMyScheduleTest extends TestCase
 
         $this->assertSame('published', $plan->fresh()->status);
 
-        $response = $this->actingAs($leader)->getJson('/api/my-schedule');
+        // Right after publish, the leader has a scheduled assignment but has
+        // not checked in yet — compensation must be 0 until attended.
+        $beforeCheckIn = $this->actingAs($leader)->getJson('/api/my-schedule');
 
-        $response->assertStatus(200);
-        $response->assertJsonStructure([
+        $beforeCheckIn->assertStatus(200);
+        $beforeCheckIn->assertJsonStructure([
             'month', 'year', 'compensation', 'shift_count', 'assignments',
         ]);
 
-        $data = $response->json();
-        $this->assertSame(7, $data['month']);
-        $this->assertSame(2026, $data['year']);
-        $this->assertGreaterThan(0, $data['shift_count']);
-        $this->assertSame($data['shift_count'] * 500, $data['compensation']);
+        $beforeData = $beforeCheckIn->json();
+        $this->assertSame(7, $beforeData['month']);
+        $this->assertSame(2026, $beforeData['year']);
+        $this->assertSame(0, $beforeData['shift_count']);
+        $this->assertSame(0, $beforeData['compensation']);
+        $this->assertNotEmpty($beforeData['assignments']);
 
-        foreach ($data['assignments'] as $assignment) {
+        foreach ($beforeData['assignments'] as $assignment) {
             $this->assertArrayHasKey('center', $assignment);
             $this->assertArrayHasKey('date', $assignment);
             $this->assertArrayHasKey('shift_type', $assignment);
             $this->assertArrayHasKey('role', $assignment);
         }
+
+        // Checking in flips the assignment to "done" — now it must count.
+        $assignmentId = $beforeData['assignments'][0]['id'];
+
+        $this->actingAs($admin)
+            ->postJson("/api/shift-assignments/{$assignmentId}/check-in")
+            ->assertStatus(200);
+
+        $afterCheckIn = $this->actingAs($leader)->getJson('/api/my-schedule');
+        $afterData = $afterCheckIn->json();
+
+        $this->assertSame(1, $afterData['shift_count']);
+        $this->assertSame(500, $afterData['compensation']);
 
         $this->actingAs($admin)
             ->postJson("/api/admin/shift-plans/{$plan->id}/send-schedule")
