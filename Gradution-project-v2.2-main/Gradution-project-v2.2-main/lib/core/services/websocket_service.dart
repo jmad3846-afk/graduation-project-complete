@@ -11,14 +11,23 @@ import '../constants/app_constants.dart';
 class WebSocketService {
   PusherChannelsClient? _client;
   PrivateChannel? _casesChannel;
+  PrivateChannel? _caseStatusChannel;
   StreamSubscription? _caseCreatedSubscription;
+  StreamSubscription? _caseStatusUpdatedSubscription;
 
   final _caseCreatedController = StreamController<void>.broadcast();
+  final _caseStatusUpdatedController = StreamController<void>.broadcast();
 
   /// Fires (with no payload) whenever a new case is broadcast on the
   /// private `cases.new` channel. Listeners should just refetch their own
   /// case list rather than trying to parse the event payload.
   Stream<void> get onCaseCreated => _caseCreatedController.stream;
+
+  /// Fires whenever a case's coarse status OR any Radio-set movement-log
+  /// timestamp (depart/arrive patient/hospital/center) changes, on the
+  /// private `cases.status` channel. Listeners should refetch rather than
+  /// parse the payload, same as onCaseCreated.
+  Stream<void> get onCaseStatusUpdated => _caseStatusUpdatedController.stream;
 
   final String _baseUrl = const String.fromEnvironment('FLUTTER_API_BASE_URL',
       defaultValue: 'http://127.0.0.1:8000/api');
@@ -65,12 +74,27 @@ class WebSocketService {
     );
     _casesChannel = casesChannel;
 
+    final caseStatusChannel = client.privateChannel(
+      'private-cases.status',
+      authorizationDelegate:
+          EndpointAuthorizableChannelTokenAuthorizationDelegate.forPrivateChannel(
+        authorizationEndpoint: Uri.parse('$_baseUrl/broadcasting/auth'),
+        headers: {'Authorization': 'Bearer $token'},
+      ),
+    );
+    _caseStatusChannel = caseStatusChannel;
+
     client.onConnectionEstablished.listen((_) {
       casesChannel.subscribeIfNotUnsubscribed();
+      caseStatusChannel.subscribeIfNotUnsubscribed();
     });
 
     _caseCreatedSubscription = casesChannel.bind('case.created').listen((event) {
       _caseCreatedController.add(null);
+    });
+
+    _caseStatusUpdatedSubscription = caseStatusChannel.bind('case.status.updated').listen((event) {
+      _caseStatusUpdatedController.add(null);
     });
 
     client.connect();
@@ -79,8 +103,12 @@ class WebSocketService {
   Future<void> dispose() async {
     await _caseCreatedSubscription?.cancel();
     _caseCreatedSubscription = null;
+    await _caseStatusUpdatedSubscription?.cancel();
+    _caseStatusUpdatedSubscription = null;
     _casesChannel?.unsubscribe();
     _casesChannel = null;
+    _caseStatusChannel?.unsubscribe();
+    _caseStatusChannel = null;
     _client?.dispose();
     _client = null;
   }

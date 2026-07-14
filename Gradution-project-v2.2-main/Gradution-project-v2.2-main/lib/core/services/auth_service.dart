@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
@@ -36,6 +37,12 @@ class AuthService {
       final response = await _apiService.client.get('/user');
       if (response.statusCode == 200) {
         return UserModel.fromJson(response.data);
+      }
+    } on DioException catch (e) {
+      // A 401 here just means the stored token is missing/expired — the
+      // normal "not logged in yet" case on app startup, not a real error.
+      if (e.response?.statusCode != 401) {
+        debugPrint('Get user error: $e');
       }
     } catch (e) {
       debugPrint('Get user error: $e');

@@ -18,6 +18,7 @@ class Lidar extends ConsumerStatefulWidget {
 
 class _LidarState extends ConsumerState<Lidar> {
   StreamSubscription? _caseCreatedSubscription;
+  StreamSubscription? _caseStatusUpdatedSubscription;
 
   @override
   void initState() {
@@ -28,11 +29,19 @@ class _LidarState extends ConsumerState<Lidar> {
     _caseCreatedSubscription = ref.read(wsProvider).onCaseCreated.listen((_) {
       ref.invalidate(sectorDashboardProvider);
     });
+
+    // Radio setting any movement-log timestamp (departing/arriving at
+    // patient/hospital/center) or a coarse status change broadcasts on the
+    // private cases.status channel; refetch so Active Tasks reflects it live.
+    _caseStatusUpdatedSubscription = ref.read(wsProvider).onCaseStatusUpdated.listen((_) {
+      ref.invalidate(sectorDashboardProvider);
+    });
   }
 
   @override
   void dispose() {
     _caseCreatedSubscription?.cancel();
+    _caseStatusUpdatedSubscription?.cancel();
     super.dispose();
   }
 

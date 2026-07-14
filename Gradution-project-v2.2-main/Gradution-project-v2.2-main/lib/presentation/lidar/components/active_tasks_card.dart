@@ -8,6 +8,35 @@ class ActiveTasksCard extends ConsumerWidget {
 
   const ActiveTasksCard({super.key, required this.isDesktop});
 
+  // Matches the field order Radio fills the movement log in (mission_row.dart),
+  // last-set-wins: the most recently reached step is the case's current status.
+  static const _movementSteps = [
+    ['arrive_center', 'وصول (مركز)'],
+    ['depart_center', 'انطلاق (مركز)'],
+    ['arrive_hospital', 'وصول (مشفى)'],
+    ['depart_hospital', 'انطلاق (مشفى)'],
+    ['arrive_patient', 'وصول (مريض)'],
+    ['depart_patient', 'انطلاق (مريض)'],
+  ];
+
+  /// The Leader-facing status label: the latest movement-log timestamp Radio
+  /// has set, with its time, e.g. "انطلاق (مريض) 14:32" — falls back to the
+  /// coarse case status if Radio hasn't logged anything yet.
+  static String _currentStatusLabel(Map<String, dynamic> task) {
+    final movementLog = task['movement_log'] as Map<String, dynamic>?;
+
+    if (movementLog != null) {
+      for (final step in _movementSteps) {
+        final value = movementLog[step[0]];
+        if (value != null && value.toString().isNotEmpty) {
+          return '${step[1]} ${value.toString()}';
+        }
+      }
+    }
+
+    return task['status']?.toString() ?? '';
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(sectorDashboardProvider);
@@ -22,16 +51,17 @@ class ActiveTasksCard extends ConsumerWidget {
           physics: isDesktop ? null : const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
             final task = activeTasks[index] as Map<String, dynamic>;
+            final currentStatus = _currentStatusLabel(task);
         return Row(
           children: [
                 Expanded(flex: 2, child: Text(task['id']?.toString() ?? '')),
                 Expanded(flex: 3, child: Text(task['center'] != null ? (task['center']['name']?.toString() ?? '') : '')),
-                Expanded(flex: 2, child: Text(task['status']?.toString() ?? '')),
+                Expanded(flex: 2, child: Text(currentStatus)),
                 if (isDesktop)
                   Expanded(flex: 3, child: Text(task['destination_hospital']?.toString() ?? '')),
                 Expanded(
                   flex: 2,
-                  child: statusChip(task['status']?.toString() ?? '', Colors.blue),
+                  child: statusChip(currentStatus, Colors.blue),
                 ),
                 Expanded(flex: 2, child: Text(task['created_at']?.toString() ?? '')),
           ],

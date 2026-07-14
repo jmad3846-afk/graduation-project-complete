@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\CaseStatusUpdated;
+use App\Models\EmsCase;
 use App\Models\MovementLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -30,6 +32,8 @@ class MovementLogController extends Controller
         }
 
         $log->update([$validated['field'] => $this->todayAt($validated['timestamp'])]);
+
+        $this->broadcastCaseUpdate($validated['case_id']);
 
         return response()->json(['message' => 'Log updated successfully', 'data' => $log]);
     }
@@ -67,11 +71,28 @@ class MovementLogController extends Controller
         $log = MovementLog::firstOrCreate(['case_id' => $caseId]);
         $log->update($validated);
 
+        $this->broadcastCaseUpdate($caseId);
+
         return response()->json(['message' => 'Movement log saved', 'data' => $log]);
     }
 
     private function todayAt(string $time): string
     {
         return Carbon::today()->setTimeFromTimeString($time)->toDateTimeString();
+    }
+
+    /**
+     * Radio-set movement timestamps are the primary live signal the Leader
+     * dashboard reacts to, so reuse the existing case.status.updated
+     * broadcast (same channels/listeners as coarse status transitions)
+     * rather than adding a second event type for Leader screens to bind to.
+     */
+    private function broadcastCaseUpdate(int $caseId): void
+    {
+        $case = EmsCase::with('movementLog')->find($caseId);
+
+        if ($case) {
+            event(new CaseStatusUpdated($case));
+        }
     }
 }

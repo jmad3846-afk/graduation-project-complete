@@ -6,22 +6,21 @@ Widget statusChip(String status, Color fallback) {
   Color bg;
   Color fg;
 
-  switch (status) {
-    case 'في الطريق':
-      bg = Colors.blue.withOpacity(0.1);
-      fg = Colors.blue;
-      break;
-    case 'وصول':
-      bg = Colors.green.withOpacity(0.1);
-      fg = Colors.green;
-      break;
-    case 'عودة':
-      bg = Colors.amber.withOpacity(0.1);
-      fg = Colors.amber.shade800;
-      break;
-    default:
-      bg = fallback.withOpacity(0.1);
-      fg = fallback;
+  // Movement-log-derived labels look like "انطلاق (مريض) 14:32" — match by
+  // the leading step word rather than the whole string, since it carries a
+  // trailing timestamp that varies per case.
+  if (status.startsWith('انطلاق')) {
+    bg = Colors.blue.withOpacity(0.1);
+    fg = Colors.blue;
+  } else if (status.startsWith('وصول')) {
+    bg = Colors.green.withOpacity(0.1);
+    fg = Colors.green;
+  } else if (status.startsWith('عودة')) {
+    bg = Colors.amber.withOpacity(0.1);
+    fg = Colors.amber.shade800;
+  } else {
+    bg = fallback.withOpacity(0.1);
+    fg = fallback;
   }
 
   return Container(
